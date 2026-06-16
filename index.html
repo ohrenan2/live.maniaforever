@@ -8,7 +8,6 @@
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.5.0/lz-string.min.js"></script>
     
     <style>
         :root {
@@ -16,10 +15,9 @@
             --main-bg: #f8fafc; --card-bg: #ffffff;
             --primary: #000000; --accent: #ec4899; 
             --accent-hover: #db2777; --accent-light: #fce7f3;
-            --success: #10b981; --danger: #ef4444; --warning: #f59e0b; --border: #e2e8f0;
-            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
-            --shadow-float: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            --success: #10b981; --danger: #ef4444; --border: #e2e8f0;
             --radius-md: 10px; --radius-lg: 16px;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
@@ -53,14 +51,13 @@
 
         .card { background: var(--card-bg); padding: 1.75rem; border-radius: var(--radius-lg); border: 1px solid var(--border); box-shadow: var(--shadow); margin-bottom: 2rem; width: 100%; max-width: 100%; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; width: 100%; }
-        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; width: 100%; }
         .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; width: 100%; }
 
         .input-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem; width: 100%; }
         .input-group { margin-bottom: 1.25rem; display: flex; flex-direction: column; width: 100%; }
         label { font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: #475569; text-transform: uppercase; letter-spacing: 0.5px;}
-        input, select, textarea { width: 100%; padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--radius-md); font-size: 0.95rem; outline: none; transition: 0.2s; background: #fff; color: #0f172a; }
-        input:focus, select:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.2); }
+        input, select { width: 100%; padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--radius-md); font-size: 0.95rem; outline: none; transition: 0.2s; background: #fff; color: #0f172a; }
+        input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.2); }
         input[readonly] { background: #f1f5f9; cursor: not-allowed; font-weight: bold; color: var(--accent); }
 
         .btn-primary { background: var(--primary); color: #fff; padding: 14px 28px; border-radius: var(--radius-md); border: none; cursor: pointer; font-weight: 600; font-size: 0.95rem; transition: all 0.2s; width: 100%; text-align: center; }
@@ -74,19 +71,20 @@
         table { width: 100%; border-collapse: collapse; min-width: 600px; }
         th { text-align: left; padding: 12px 16px; font-size: 0.75rem; text-transform: uppercase; color: #64748b; border-bottom: 2px solid var(--border); background: #f8fafc; font-weight: 700; white-space: nowrap; }
         td { padding: 16px; border-bottom: 1px solid var(--border); font-size: 0.95rem; color: #334155; vertical-align: middle; }
-        tr:last-child td { border-bottom: none; }
         tr:hover td { background: var(--accent-light); }
         
         .badge { padding: 6px 12px; border-radius: 99px; font-size: 0.75rem; font-weight: 700; display: inline-block; text-transform: uppercase; white-space: nowrap; }
         .bg-pink { background: #fce7f3; color: #be185d; }
         .bg-green { background: #dcfce7; color: #15803d; }
-        .bg-gray { background: #f1f5f9; color: #475569; }
         .bg-red { background: #fee2e2; color: #b91c1c; }
 
-        .btn-delete { background: transparent; color: #94a3b8; border: none; cursor: pointer; font-size: 1.2rem; padding: 4px 8px; border-radius: 4px; transition: 0.2s; }
+        .btn-action { background: transparent; border: none; cursor: pointer; font-size: 1.2rem; padding: 4px 8px; border-radius: 4px; transition: 0.2s; }
+        .btn-delete { color: #94a3b8; }
         .btn-delete:hover { color: var(--danger); background: #fee2e2; }
+        .btn-print { color: #64748b; }
+        .btn-print:hover { color: #000; background: #e2e8f0; }
 
-        .resumo-cliente { border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.5rem; margin-bottom: 1.rem; background: #fff; }
+        .resumo-cliente { border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.5rem; margin-bottom: 1rem; background: #fff; }
         .resumo-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--accent-light); padding-bottom: 1rem; margin-bottom: 1rem; flex-wrap: wrap; gap: 10px;}
         .resumo-header h4 { font-size: 1.2rem; margin: 0; color: var(--primary); }
         
@@ -102,36 +100,40 @@
         select.status-pago { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
         select.status-neutro { background: #f1f5f9; color: #475569; border: 1px solid var(--border); }
 
-        /* AREAS DE IMPRESSÃO (PDF DECORADO) */
-        #print-area-catalogo, #print-area-relatorio { display: none; }
+        /* AREAS DE IMPRESSÃO (Ficam escondidas na tela normal) */
+        #print-area-catalogo, #print-area-relatorio, #print-area-etiqueta { display: none; }
         
         @media print {
-            body.printing-catalogo * { visibility: hidden; }
+            body * { visibility: hidden; } /* Esconde tudo por padrão na impressão */
+            
+            /* IMPRESSÃO DO CATÁLOGO DE PEÇAS */
             body.printing-catalogo #print-area-catalogo, body.printing-catalogo #print-area-catalogo * { visibility: visible; }
             body.printing-catalogo #print-area-catalogo { display: block; position: absolute; left: 0; top: 0; width: 100%; padding: 20px; background: white; }
-            body.printing-catalogo { background: white; }
-
-            body.printing-relatorio * { visibility: hidden; }
+            
+            /* IMPRESSÃO DO RELATÓRIO DE VENDAS */
             body.printing-relatorio #print-area-relatorio, body.printing-relatorio #print-area-relatorio * { visibility: visible; }
             body.printing-relatorio #print-area-relatorio { display: block; position: absolute; left: 0; top: 0; width: 100%; padding: 20px; background: white; }
-            body.printing-relatorio { background: white; }
             
-            /* Decoração Geral PDF */
-            .pdf-header { text-align: center; border-bottom: 3px solid #ec4899; padding-bottom: 20px; margin-bottom: 30px; }
-            .pdf-header h1 { font-size: 32px; color: #000; text-transform: uppercase; margin: 0; letter-spacing: 2px; }
-            .pdf-header h1 span { color: #ec4899; }
-            .pdf-header p { color: #64748b; font-size: 14px; margin-top: 5px; }
-            
-            .pdf-table { width: 100%; border-collapse: collapse; }
-            .pdf-table th { background-color: #fce7f3 !important; color: #be185d !important; padding: 12px; text-align: left; font-size: 14px; border-bottom: 2px solid #ec4899; }
-            .pdf-table td { padding: 12px; border-bottom: 1px solid #e2e8f0; font-size: 16px; color: #333; }
-            
-            /* Estilo Específico Catálogo */
-            .pdf-cod-destaque { font-size: 22px; font-weight: 900; color: #000; }
-            .pdf-preco-destaque { font-size: 18px; font-weight: 800; color: #10b981; }
-            .pdf-row-vendida td { color: #cbd5e1; text-decoration: line-through; }
-            .pdf-row-vendida .pdf-cod-destaque { color: #cbd5e1; }
-            .pdf-row-vendida .pdf-preco-destaque { color: #cbd5e1; }
+            /* IMPRESSÃO DA ETIQUETA ARGOX 40x25mm */
+            @page { margin: 0; }
+            body.printing-etiqueta { background: #fff; margin: 0; padding: 0; }
+            body.printing-etiqueta #print-area-etiqueta, body.printing-etiqueta #print-area-etiqueta * { visibility: visible; }
+            body.printing-etiqueta #print-area-etiqueta { 
+                display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
+                position: absolute; left: 0; top: 0; width: 40mm; height: 25mm; padding: 2mm; overflow: hidden; background: white;
+            }
+            .etiq-loja { font-size: 7pt; font-weight: 800; text-transform: uppercase; margin-bottom: 2px; }
+            .etiq-cod { font-size: 14pt; font-weight: 900; letter-spacing: 1px; margin-bottom: 2px; border: 1px solid #000; padding: 1px 4px; border-radius: 3px; }
+            .etiq-desc { font-size: 6pt; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+            .etiq-preco { font-size: 9pt; font-weight: 900; margin-top: 2px; }
+
+            /* ESTILOS COMUNS PARA PDF A4 */
+            .pdf-header { text-align: center; border-bottom: 3px solid #000; padding-bottom: 10px; margin-bottom: 20px; }
+            .pdf-header h1 { font-size: 24px; color: #000; text-transform: uppercase; margin: 0; }
+            .pdf-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            .pdf-table th { background-color: #eee !important; color: #000 !important; padding: 8px; text-align: left; font-size: 14px; border-bottom: 2px solid #000; }
+            .pdf-table td { padding: 8px; border-bottom: 1px solid #ccc; font-size: 14px; color: #000; }
+            .pdf-cod-destaque { font-size: 18px; font-weight: 900; }
         }
 
         @media (max-width: 900px) {
@@ -140,8 +142,7 @@
             .sidebar.active { transform: translateX(0); }
             .mobile-header { display: flex; }
             .main-content { margin-left: 0; padding: 1.25rem 1rem; width: 100%; max-width: 100vw; }
-            .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr !important; gap: 1rem !important; }
-            .input-grid { grid-template-columns: 1fr !important; gap: 0; }
+            .grid-2, .grid-4 { grid-template-columns: 1fr !important; gap: 1rem !important; }
             h2 { font-size: 1.6rem; margin-bottom: 1.5rem; }
             .card { padding: 1.25rem; margin-bottom: 1rem; }
             .zap-group { justify-content: flex-start; }
@@ -151,32 +152,25 @@
 </head>
 <body>
 
-    <!-- CABEÇALHO MOBILE -->
     <div class="mobile-header">
-        <div class="logo">MANIA FOREVER<span>LIVE SHOP</span></div>
+        <div class="logo">MANIA FOREVER<span>LIVE</span></div>
         <button onclick="toggleMenu()" style="background:none; border:none; color:white; font-size:1.5rem; cursor:pointer; padding:5px;"><i class="fa-solid fa-bars"></i></button>
     </div>
     <div id="mobile-overlay" onclick="toggleMenu()"></div>
 
-    <!-- MENU LATERAL -->
     <div class="sidebar" id="sidebar">
         <div class="logo">MANIA FOREVER<span>LIVE SHOP</span></div>
-        
         <div class="nav-item active" onclick="showSection('dashboard')"><i class="fa-solid fa-chart-line"></i> Vendas no Total</div>
         <div class="nav-item" onclick="showSection('pecas')"><i class="fa-solid fa-shirt"></i> Peças da Live</div>
         <div class="nav-item" onclick="showSection('lancamento')"><i class="fa-solid fa-cart-arrow-down"></i> Lançamento Rápido</div>
         <div class="nav-item" onclick="showSection('por-pessoa')"><i class="fa-solid fa-users"></i> Fechamento Sacolas</div>
         <div class="nav-item" onclick="showSection('logistica')"><i class="fa-solid fa-truck-fast"></i> Controle / Logística</div>
-        
-        <div class="nav-item" onclick="showSection('nuvem')" style="border-top: 1px solid #333; margin-top: 1rem; padding-top: 1rem;"><i class="fa-solid fa-cloud-arrow-up"></i> Nuvem / Backup</div>
-        
+        <div class="nav-item" onclick="showSection('nuvem')" style="border-top: 1px solid #333; margin-top: 1rem; padding-top: 1rem;"><i class="fa-solid fa-cloud"></i> Nuvem (Online)</div>
         <div class="nav-item" onclick="limparLive()" style="margin-top: auto; color: var(--danger);"><i class="fa-solid fa-trash-can"></i> Encerrar/Limpar Live</div>
     </div>
 
-    <!-- CONTEÚDO PRINCIPAL -->
     <div class="main-content">
         
-        <!-- DASHBOARD -->
         <div id="dashboard" class="section active">
             <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 2.5rem; gap: 15px;">
                 <h2 style="margin: 0;">Visão Geral da Live</h2>
@@ -198,16 +192,13 @@
                 <h3>Últimos Lançamentos (Tempo Real)</h3>
                 <div class="table-container">
                     <table>
-                        <thead>
-                            <tr><th>Cliente (Nome / User)</th><th>Peça</th><th>Cor/Tamanho</th><th style="text-align: right;">Valor</th></tr>
-                        </thead>
+                        <thead><tr><th>Cliente</th><th>Peça</th><th>Cor/Tamanho</th><th style="text-align: right;">Valor</th></tr></thead>
                         <tbody id="lista-ultimas-vendas"></tbody>
                     </table>
                 </div>
             </div>
         </div>
 
-        <!-- ABA PEÇAS -->
         <div id="pecas" class="section">
             <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 2.5rem; gap: 15px;">
                 <h2 style="margin: 0;">Estoque / Peças da Live</h2>
@@ -222,20 +213,11 @@
                             <label>Código Gerado</label>
                             <input type="text" id="peca-codigo" readonly value="MF-001">
                         </div>
-                        <div class="input-group">
-                            <label>Nome da Peça</label>
-                            <input type="text" id="peca-nome" required placeholder="Ex: Vestido Estampado">
-                        </div>
-                        <div class="input-group">
-                            <label>Cor / Tamanho</label>
-                            <input type="text" id="peca-cor" required placeholder="Ex: Preto M">
-                        </div>
-                        <div class="input-group">
-                            <label>Preço (R$)</label>
-                            <input type="number" step="0.01" id="peca-preco" required placeholder="0.00">
-                        </div>
+                        <div class="input-group"><label>Nome da Peça</label><input type="text" id="peca-nome" required></div>
+                        <div class="input-group"><label>Cor / Tamanho</label><input type="text" id="peca-cor" required></div>
+                        <div class="input-group"><label>Preço (R$)</label><input type="number" step="0.01" id="peca-preco" required></div>
                     </div>
-                    <button type="submit" class="btn-primary" style="margin-top: 10px;"><i class="fa-solid fa-plus"></i> Adicionar Peça à Live</button>
+                    <button type="submit" class="btn-primary" style="margin-top: 10px;"><i class="fa-solid fa-plus"></i> Adicionar Peça</button>
                 </form>
             </div>
 
@@ -243,16 +225,13 @@
                 <h3>Catálogo (Organizado por Preço)</h3>
                 <div class="table-container">
                     <table>
-                        <thead>
-                            <tr><th>Código</th><th>Peça</th><th>Detalhes</th><th>Preço</th><th style="text-align: right;">Ações</th></tr>
-                        </thead>
+                        <thead><tr><th>Código</th><th>Peça</th><th>Detalhes</th><th>Preço</th><th style="text-align: right;">Ações</th></tr></thead>
                         <tbody id="lista-pecas"></tbody>
                     </table>
                 </div>
             </div>
         </div>
 
-        <!-- ABA LANÇAMENTO -->
         <div id="lancamento" class="section">
             <h2>Lançamento Rápido</h2>
             <p style="color: #64748b; margin-bottom: 2rem;">Para agilizar, basta digitar <b>apenas o número</b> da peça (Ex: digite <strong style="color: var(--accent);">5</strong> para buscar a <strong>MF-005</strong>).</p>
@@ -262,38 +241,25 @@
                     <div class="grid-2">
                         <div style="background: #f8fafc; padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--border);">
                             <h4 style="margin-bottom: 1rem; color: var(--primary);"><i class="fa-solid fa-user"></i> Dados da Cliente</h4>
-                            
-                            <div class="input-group">
-                                <label>Nome da Cliente (Para a mensagem)</label>
-                                <input type="text" id="venda-cliente-nome" required placeholder="Ex: Renata Silva">
-                            </div>
+                            <div class="input-group"><label>Nome da Cliente</label><input type="text" id="venda-cliente-nome" required></div>
                             <div class="input-grid" style="gap: 10px; margin-bottom: 0;">
-                                <div class="input-group" style="margin-bottom: 0;">
-                                    <label>User / Instagram</label>
-                                    <input type="text" id="venda-cliente-user" placeholder="Ex: @renata_silva">
-                                </div>
-                                <div class="input-group" style="margin-bottom: 0;">
-                                    <label>WhatsApp (Opcional)</label>
-                                    <input type="text" id="venda-cliente-fone" placeholder="(XX) 9XXXX-XXXX">
-                                </div>
+                                <div class="input-group" style="margin-bottom: 0;"><label>User / Instagram</label><input type="text" id="venda-cliente-user"></div>
+                                <div class="input-group" style="margin-bottom: 0;"><label>WhatsApp (Opcional)</label><input type="text" id="venda-cliente-fone"></div>
                             </div>
                         </div>
 
                         <div style="background: #fff; padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--accent);">
                             <h4 style="margin-bottom: 1rem; color: var(--accent);"><i class="fa-solid fa-tag"></i> Informações da Peça</h4>
-                            
                             <div class="input-group">
                                 <label style="color: var(--accent);">Número ou Código</label>
-                                <input type="text" id="venda-codigo-busca" required placeholder="Ex: 12" oninput="buscarPecaPorCodigo()" autocomplete="off" style="border-color: var(--accent); font-weight: bold; text-transform: uppercase; font-size: 1.2rem;">
+                                <input type="text" id="venda-codigo-busca" required oninput="buscarPecaPorCodigo()" autocomplete="off" style="border-color: var(--accent); font-weight: bold; text-transform: uppercase; font-size: 1.2rem;">
                             </div>
-
                             <div id="preview-peca" style="display: none; padding: 10px; background: var(--accent-light); border-radius: 8px; margin-bottom: 1rem; text-align: center;">
-                                <div style="font-weight: 900; color: var(--accent); font-size: 0.8rem; letter-spacing: 1px; margin-bottom: 5px;" id="preview-codigo-real">MF-000</div>
-                                <div style="font-weight: 800; font-size: 1.1rem;" id="preview-nome">NOME DA PEÇA</div>
-                                <div style="color: #be185d; font-size: 0.9rem;" id="preview-cor">Cor/Tamanho</div>
-                                <div style="font-weight: 800; font-size: 1.4rem; margin-top: 5px;" id="preview-preco">R$ 0,00</div>
+                                <div style="font-weight: 900; color: var(--accent); font-size: 0.8rem; letter-spacing: 1px; margin-bottom: 5px;" id="preview-codigo-real"></div>
+                                <div style="font-weight: 800; font-size: 1.1rem;" id="preview-nome"></div>
+                                <div style="color: #be185d; font-size: 0.9rem;" id="preview-cor"></div>
+                                <div style="font-weight: 800; font-size: 1.4rem; margin-top: 5px;" id="preview-preco"></div>
                             </div>
-
                             <button type="submit" class="btn-success" id="btn-confirmar-venda" disabled><i class="fa-solid fa-check-circle"></i> Confirmar Arremate</button>
                         </div>
                     </div>
@@ -301,127 +267,91 @@
             </div>
         </div>
 
-        <!-- ABA VENDA POR PESSOA -->
         <div id="por-pessoa" class="section">
             <h2>Fechamento de Sacolas</h2>
-            <p style="color: #64748b; margin-bottom: 2rem;">Veja o resumo de cada cliente e envie mensagens de cobrança, alerta ou pós-venda.</p>
-
             <div id="container-sacolas"></div>
         </div>
 
-        <!-- ABA CONTROLE E LOGÍSTICA -->
         <div id="logistica" class="section">
             <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 2.5rem; gap: 15px;">
                 <h2 style="margin: 0;">Controle de Pagamentos e Envios</h2>
-                <button class="btn-outline" style="width: auto; background: #25D366; color: white; border: none;" onclick="gerarResumoLogisticaZap()"><i class="fa-brands fa-whatsapp"></i> Enviar Lista Logística no ZAP</button>
+                <button class="btn-outline" style="width: auto; background: #25D366; color: white; border: none;" onclick="gerarResumoLogisticaZap()"><i class="fa-brands fa-whatsapp"></i> Resumo no WhatsApp</button>
             </div>
-            
-            <p style="color: #64748b; margin-bottom: 2rem;">Acompanhe o andamento das entregas e os valores recebidos.</p>
-
             <div class="card">
                 <div class="table-container">
                     <table>
-                        <thead>
-                            <tr>
-                                <th>Sacola / Cliente</th>
-                                <th>Total Devido</th>
-                                <th>Status Pagamento</th>
-                                <th>Forma de Pgto</th>
-                                <th>Status Entrega</th>
-                            </tr>
-                        </thead>
+                        <thead><tr><th>Sacola / Cliente</th><th>Total Devido</th><th>Status Pagamento</th><th>Forma Pgto</th><th>Status Entrega</th></tr></thead>
                         <tbody id="lista-logistica"></tbody>
                     </table>
                 </div>
             </div>
         </div>
 
-        <!-- ABA NUVEM -->
         <div id="nuvem" class="section">
-            <h2>Nuvem MF - Sincronização Super Leve</h2>
-            <p style="color: #64748b; margin-bottom: 2rem;">O código gerado agora é <b>extremamente compactado</b> e leva também os status de pagamento.</p>
+            <h2>Nuvem MF - Sincronização Online</h2>
+            <p style="color: #64748b; margin-bottom: 2rem;">Agora o sistema sobe seus dados para a nuvem real. Você recebe um <b>código numérico curto</b> para digitar no celular e puxar tudo.</p>
 
             <div class="grid-2">
                 <div class="card" style="border-top: 4px solid var(--accent);">
-                    <h3>1. Exportar Dados (Gerar)</h3>
-                    <button class="btn-primary" onclick="gerarCodigoSync()"><i class="fa-solid fa-file-zipper"></i> Gerar Código Compacto</button>
-                    <textarea id="sync-code-output" rows="3" readonly placeholder="O código aparecerá aqui..." style="font-family: monospace; font-size: 0.8rem; background: #f1f5f9; cursor: text; margin-top: 1rem; width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border);"></textarea>
+                    <h3>1. Enviar para a Nuvem</h3>
+                    <button class="btn-primary" id="btn-gerar-nuvem" onclick="salvarNaNuvem()"><i class="fa-solid fa-cloud-arrow-up"></i> Gerar Código de Nuvem</button>
+                    <div id="loading-nuvem" style="display:none; text-align:center; margin-top:10px;"><i class="fa-solid fa-spinner fa-spin"></i> Conectando ao servidor...</div>
+                    <div style="margin-top: 15px; text-align: center;">
+                        <span style="font-size: 0.85rem; color: #64748b; display: block; margin-bottom: 5px;">Seu Código Numérico:</span>
+                        <input type="text" id="nuvem-codigo-gerado" readonly style="font-size: 1.5rem; font-weight: 900; text-align: center; color: var(--accent); cursor: copy;" onclick="this.select(); document.execCommand('copy'); alert('Código copiado!');" placeholder="---">
+                    </div>
                 </div>
 
                 <div class="card" style="border-top: 4px solid var(--success);">
-                    <h3>2. Importar Dados (Colar)</h3>
-                    <textarea id="sync-code-input" rows="3" placeholder="Cole o código aqui..." style="font-family: monospace; font-size: 0.8rem; margin-bottom: 1rem; width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border);"></textarea>
-                    <button class="btn-success" onclick="importarCodigoSync()"><i class="fa-solid fa-cloud-arrow-down"></i> Sincronizar Agora</button>
+                    <h3>2. Baixar da Nuvem</h3>
+                    <input type="text" id="nuvem-codigo-importar" placeholder="Digite o código numérico aqui..." style="font-size: 1.2rem; text-align: center; margin-bottom: 1rem; font-weight: bold;">
+                    <button class="btn-success" id="btn-baixar-nuvem" onclick="baixarDaNuvem()"><i class="fa-solid fa-cloud-arrow-down"></i> Baixar e Sincronizar</button>
+                    <div id="loading-baixar" style="display:none; text-align:center; margin-top:10px; color: var(--success);"><i class="fa-solid fa-spinner fa-spin"></i> Baixando dados...</div>
                 </div>
             </div>
         </div>
 
     </div>
 
-    <!-- ÁREA DE IMPRESSÃO - CATÁLOGO DE PEÇAS (FICA ESCONDIDA) -->
     <div id="print-area-catalogo">
         <div class="pdf-header">
             <h1>MANIA FOREVER <span>LIVE SHOP</span></h1>
-            <p id="pdf-data-hora-catalogo">Catálogo Limpo - Gerado em: --</p>
+            <p id="pdf-data-hora-catalogo"></p>
         </div>
         <table class="pdf-table">
-            <thead>
-                <tr>
-                    <th style="width: 25%;">CÓDIGO</th>
-                    <th style="width: 50%;">PEÇA / COR</th>
-                    <th style="width: 25%;">PREÇO</th>
-                </tr>
-            </thead>
+            <thead><tr><th style="width:20%">CÓDIGO</th><th style="width:50%">PEÇA / DETALHES</th><th style="width:30%">PREÇO</th></tr></thead>
             <tbody id="pdf-tbody-catalogo"></tbody>
         </table>
     </div>
 
-    <!-- ÁREA DE IMPRESSÃO - RELATÓRIO DE VENDAS (FICA ESCONDIDA) -->
     <div id="print-area-relatorio">
         <div class="pdf-header">
-            <h1>MANIA FOREVER <span>RELATÓRIO DE VENDAS</span></h1>
-            <p id="pdf-data-hora-relatorio">Relatório da Live - Gerado em: --</p>
+            <h1>MANIA FOREVER <span>FECHAMENTO DE VENDAS</span></h1>
+            <p id="pdf-data-hora-relatorio"></p>
         </div>
-        
-        <div style="background: #f8fafc; border: 2px solid #ec4899; padding: 20px; border-radius: 10px; text-align: center; margin-bottom: 30px;">
-            <p style="margin: 0; font-size: 16px; color: #64748b; font-weight: bold; text-transform: uppercase;">Faturamento Total da Live</p>
-            <h2 id="pdf-relatorio-total" style="margin: 5px 0 0; color: #ec4899; font-size: 36px;">R$ 0,00</h2>
+        <div style="text-align:center; border: 2px solid #000; padding: 15px; margin-bottom: 20px;">
+            <h3>FATURAMENTO TOTAL</h3>
+            <h2 id="pdf-relatorio-total" style="font-size: 30px; margin: 0;"></h2>
         </div>
-
         <table class="pdf-table">
-            <thead>
-                <tr>
-                    <th>Cliente / Sacola</th>
-                    <th>Valor Comprado</th>
-                    <th>Status / Pagamento</th>
-                    <th>Qtd. Peças</th>
-                </tr>
-            </thead>
+            <thead><tr><th>CLIENTE</th><th>TOTAL COMPRADO</th><th>STATUS PGTO</th><th>QTD PEÇAS</th></tr></thead>
             <tbody id="pdf-tbody-relatorio"></tbody>
         </table>
     </div>
 
+    <div id="print-area-etiqueta">
+        <div class="etiq-loja">MANIA FOREVER</div>
+        <div class="etiq-cod" id="etiq-codigo">MF-000</div>
+        <div class="etiq-desc" id="etiq-nome">Nome da Peca Curto</div>
+        <div class="etiq-preco" id="etiq-valor">R$ 0,00</div>
+    </div>
+
 <script>
-    // BANCO DE DADOS LOCAL
-    let dbLive = JSON.parse(localStorage.getItem('mania_forever_live_v3')) || { 
-        pecas: [], 
-        vendas: [], 
-        status: {} 
-    };
-    
-    // Migração para v3
-    if(!localStorage.getItem('mania_forever_live_v3') && localStorage.getItem('mania_forever_live_v2')) {
-        dbLive = JSON.parse(localStorage.getItem('mania_forever_live_v2'));
-        salvarBanco();
-    }
+    let dbLive = JSON.parse(localStorage.getItem('mania_forever_live_final')) || { pecas: [], vendas: [], status: {} };
 
-    let pecaSelecionadaParaVenda = null;
+    function salvarBanco() { localStorage.setItem('mania_forever_live_final', JSON.stringify(dbLive)); }
+    function formatarMoeda(valor) { return `R$ ${parseFloat(valor).toFixed(2).replace('.', ',')}`; }
 
-    function salvarBanco() {
-        localStorage.setItem('mania_forever_live_v3', JSON.stringify(dbLive));
-    }
-
-    // NAVEGAÇÃO
     function toggleMenu() { 
         document.getElementById('sidebar').classList.toggle('active'); 
         document.getElementById('mobile-overlay').classList.toggle('active');
@@ -430,26 +360,18 @@
     function showSection(id) {
         document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        
         document.getElementById(id).classList.add('active');
         document.querySelector(`[onclick="showSection('${id}')"]`).classList.add('active');
-        
         if(window.innerWidth <= 900) {
             document.getElementById('sidebar').classList.remove('active');
             document.getElementById('mobile-overlay').classList.remove('active');
         }
-        
         atualizarTelas();
     }
 
-    // ==========================================
-    // MÓDULO: PEÇAS E IMPRESSÕES (PDF)
-    // ==========================================
-    
     function atualizarCodigoGerado() {
         const proximoNumero = dbLive.pecas.length + 1;
-        const cod = "MF-" + proximoNumero.toString().padStart(3, '0');
-        document.getElementById('peca-codigo').value = cod;
+        document.getElementById('peca-codigo').value = "MF-" + proximoNumero.toString().padStart(3, '0');
     }
 
     function cadastrarPeca() {
@@ -457,158 +379,108 @@
         const nome = document.getElementById('peca-nome').value;
         const cor = document.getElementById('peca-cor').value;
         const preco = parseFloat(document.getElementById('peca-preco').value);
-
         dbLive.pecas.push({ codigo, nome, cor, preco, vendida: false });
         salvarBanco();
-        
         document.getElementById('peca-nome').value = '';
         document.getElementById('peca-cor').value = '';
         document.getElementById('peca-preco').value = '';
-        
         atualizarTelas();
     }
 
     function deletarPeca(codigo) {
-        if(confirm("Deseja realmente apagar esta peça do catálogo?")) {
+        if(confirm("Apagar peça?")) {
             dbLive.pecas = dbLive.pecas.filter(p => p.codigo !== codigo);
-            salvarBanco();
-            atualizarTelas();
+            salvarBanco(); atualizarTelas();
         }
     }
 
-    // PDF 1: Catálogo Limpo (Só o necessário pra Live)
+    // --- IMPRESSÕES (A4 E ARGOX) ---
     function imprimirPDFPecas() {
         const tbody = document.getElementById('pdf-tbody-catalogo');
         tbody.innerHTML = "";
-        
-        const pecasOrdenadas = [...dbLive.pecas].sort((a,b) => a.preco - b.preco);
-        
-        // Exibe apenas CÓDIGO GIGANTE, NOME+COR, PREÇO (Oculta vendidas ou risca)
-        pecasOrdenadas.forEach(p => {
-            if(p.vendida) return; // Se quiser que as vendidas não apareçam pra limpar a lista
-            
-            tbody.innerHTML += `
-                <tr>
-                    <td class="pdf-cod-destaque">${p.codigo}</td>
-                    <td><strong style="font-size: 18px;">${p.nome}</strong><br><span style="color:#64748b;">${p.cor}</span></td>
-                    <td class="pdf-preco-destaque">${formatarMoeda(p.preco)}</td>
-                </tr>
-            `;
+        const pecas = [...dbLive.pecas].sort((a,b) => a.preco - b.preco);
+        pecas.forEach(p => {
+            if(p.vendida) return;
+            tbody.innerHTML += `<tr><td class="pdf-cod-destaque">${p.codigo}</td><td><strong>${p.nome}</strong><br>${p.cor}</td><td style="font-weight:bold; font-size:16px;">${formatarMoeda(p.preco)}</td></tr>`;
         });
-
-        document.getElementById('pdf-data-hora-catalogo').innerText = "Lista Simplificada para a Live - Gerado em: " + new Date().toLocaleString('pt-BR');
-        
+        document.getElementById('pdf-data-hora-catalogo').innerText = "Lista para a Live - " + new Date().toLocaleString('pt-BR');
         document.body.classList.add('printing-catalogo');
         window.print();
         setTimeout(() => { document.body.classList.remove('printing-catalogo'); }, 500);
     }
 
-    // PDF 2: Relatório de Vendas Total
     function imprimirPDFRelatorio() {
         const tbody = document.getElementById('pdf-tbody-relatorio');
         tbody.innerHTML = "";
-
         const sacolas = agruparSacolas();
-        const chaves = Object.keys(sacolas);
-        let totalLive = 0;
-
-        chaves.forEach(chave => {
-            const sacola = sacolas[chave];
-            totalLive += sacola.total;
-            let status = dbLive.status[chave] || { pago: false, forma: "Não Informado" };
-            
-            let statusPgto = status.pago ? `<span style="color:#10b981; font-weight:bold;">Pago (${status.forma})</span>` : `<span style="color:#ef4444; font-weight:bold;">Pendente</span>`;
-
-            tbody.innerHTML += `
-                <tr>
-                    <td><strong>${sacola.nome}</strong></td>
-                    <td style="font-weight:bold; color:#000;">${formatarMoeda(sacola.total)}</td>
-                    <td>${statusPgto}</td>
-                    <td>${sacola.pecas.length} un.</td>
-                </tr>
-            `;
+        let total = 0;
+        Object.keys(sacolas).forEach(chave => {
+            const s = sacolas[chave];
+            total += s.total;
+            let status = dbLive.status[chave] || { pago: false };
+            let txStatus = status.pago ? 'PAGO' : 'PENDENTE';
+            tbody.innerHTML += `<tr><td><strong>${s.nome}</strong></td><td>${formatarMoeda(s.total)}</td><td>${txStatus}</td><td>${s.pecas.length}</td></tr>`;
         });
-
-        document.getElementById('pdf-relatorio-total').innerText = formatarMoeda(totalLive);
-        document.getElementById('pdf-data-hora-relatorio').innerText = "Fechamento da Live - Gerado em: " + new Date().toLocaleString('pt-BR');
-
+        document.getElementById('pdf-relatorio-total').innerText = formatarMoeda(total);
+        document.getElementById('pdf-data-hora-relatorio').innerText = "Gerado em: " + new Date().toLocaleString('pt-BR');
         document.body.classList.add('printing-relatorio');
         window.print();
         setTimeout(() => { document.body.classList.remove('printing-relatorio'); }, 500);
     }
 
-    // ==========================================
-    // MÓDULO: LANÇAMENTO RÁPIDO
-    // ==========================================
+    function imprimirEtiquetaArgox(codigo, nome, preco) {
+        document.getElementById('etiq-codigo').innerText = codigo;
+        document.getElementById('etiq-nome').innerText = nome;
+        document.getElementById('etiq-valor').innerText = formatarMoeda(preco);
+        
+        document.body.classList.add('printing-etiqueta');
+        window.print();
+        setTimeout(() => { document.body.classList.remove('printing-etiqueta'); }, 500);
+    }
 
+    // --- LANÇAMENTO ---
+    let pecaSelecionadaParaVenda = null;
     function buscarPecaPorCodigo() {
         let inputStr = document.getElementById('venda-codigo-busca').value.toUpperCase().trim();
         const previewDiv = document.getElementById('preview-peca');
         const btnConfirmar = document.getElementById('btn-confirmar-venda');
         
-        if(!inputStr) {
-            pecaSelecionadaParaVenda = null;
-            previewDiv.style.display = 'none';
-            btnConfirmar.disabled = true;
-            return;
-        }
+        if(!inputStr) { previewDiv.style.display = 'none'; btnConfirmar.disabled = true; return; }
 
-        let codigoPesquisa = inputStr;
-        if (/^\d+$/.test(inputStr)) {
-            const numero = parseInt(inputStr, 10);
-            codigoPesquisa = "MF-" + String(numero).padStart(3, '0');
-        }
+        let codBusca = inputStr;
+        if (/^\d+$/.test(inputStr)) codBusca = "MF-" + String(parseInt(inputStr, 10)).padStart(3, '0');
 
-        const pecaEncontrada = dbLive.pecas.find(p => p.codigo === codigoPesquisa && !p.vendida);
-
-        if (pecaEncontrada) {
-            pecaSelecionadaParaVenda = pecaEncontrada;
-            document.getElementById('preview-codigo-real').innerText = pecaEncontrada.codigo;
-            document.getElementById('preview-nome').innerText = pecaEncontrada.nome;
-            document.getElementById('preview-cor').innerText = pecaEncontrada.cor;
-            document.getElementById('preview-preco').innerText = formatarMoeda(pecaEncontrada.preco);
-            
-            previewDiv.style.display = 'block';
-            btnConfirmar.disabled = false;
+        const p = dbLive.pecas.find(x => x.codigo === codBusca && !x.vendida);
+        if (p) {
+            pecaSelecionadaParaVenda = p;
+            document.getElementById('preview-codigo-real').innerText = p.codigo;
+            document.getElementById('preview-nome').innerText = p.nome;
+            document.getElementById('preview-cor').innerText = p.cor;
+            document.getElementById('preview-preco').innerText = formatarMoeda(p.preco);
+            previewDiv.style.display = 'block'; btnConfirmar.disabled = false;
         } else {
-            pecaSelecionadaParaVenda = null;
-            previewDiv.style.display = 'none';
-            btnConfirmar.disabled = true;
+            pecaSelecionadaParaVenda = null; previewDiv.style.display = 'none'; btnConfirmar.disabled = true;
         }
     }
 
     function registrarVenda() {
         if(!pecaSelecionadaParaVenda) return;
-
-        const clienteNome = document.getElementById('venda-cliente-nome').value.trim();
-        const clienteUser = document.getElementById('venda-cliente-user').value.trim();
-        const clienteFone = document.getElementById('venda-cliente-fone').value.trim();
-
+        const cNome = document.getElementById('venda-cliente-nome').value.trim();
         dbLive.vendas.push({
-            id: Date.now(),
-            clienteNome: clienteNome,
-            clienteUser: clienteUser,
-            fone: clienteFone,
-            codigoPeca: pecaSelecionadaParaVenda.codigo,
-            nomePeca: pecaSelecionadaParaVenda.nome,
-            corPeca: pecaSelecionadaParaVenda.cor,
-            precoFinal: pecaSelecionadaParaVenda.preco,
-            dataHora: new Date().toLocaleString('pt-BR')
+            id: Date.now(), clienteNome: cNome, clienteUser: document.getElementById('venda-cliente-user').value.trim(),
+            fone: document.getElementById('venda-cliente-fone').value.trim(), codigoPeca: pecaSelecionadaParaVenda.codigo,
+            nomePeca: pecaSelecionadaParaVenda.nome, corPeca: pecaSelecionadaParaVenda.cor, precoFinal: pecaSelecionadaParaVenda.preco
         });
 
-        const chaveCli = clienteNome.toUpperCase();
-        if(!dbLive.status[chaveCli]) {
-            dbLive.status[chaveCli] = { pago: false, forma: "", entrega: "Aguardando" };
-        }
+        const chaveCli = cNome.toUpperCase();
+        if(!dbLive.status[chaveCli]) dbLive.status[chaveCli] = { pago: false, forma: "", entrega: "Aguardando" };
 
         const p = dbLive.pecas.find(x => x.codigo === pecaSelecionadaParaVenda.codigo);
         if(p) p.vendida = true;
-
-        salvarBanco();
         
+        salvarBanco();
         document.getElementById('venda-codigo-busca').value = '';
-        buscarPecaPorCodigo(); 
-        atualizarTelas();
+        buscarPecaPorCodigo(); atualizarTelas();
         
         const btn = document.getElementById('btn-confirmar-venda');
         btn.innerHTML = "<i class='fa-solid fa-check'></i> Arrematado!";
@@ -616,272 +488,172 @@
     }
 
     function deletarVenda(idVenda) {
-        if(confirm("Cancelar este arremate? A peça voltará para o estoque.")) {
-            const venda = dbLive.vendas.find(v => v.id === idVenda);
-            if(venda) {
-                const peca = dbLive.pecas.find(p => p.codigo === venda.codigoPeca);
-                if(peca) peca.vendida = false;
-            }
-            dbLive.vendas = dbLive.vendas.filter(v => v.id !== idVenda);
-            salvarBanco();
-            atualizarTelas();
+        if(confirm("Cancelar arremate?")) {
+            const v = dbLive.vendas.find(x => x.id === idVenda);
+            if(v) { const p = dbLive.pecas.find(x => x.codigo === v.codigoPeca); if(p) p.vendida = false; }
+            dbLive.vendas = dbLive.vendas.filter(x => x.id !== idVenda);
+            salvarBanco(); atualizarTelas();
         }
     }
 
-    // ==========================================
-    // MÓDULO: NUVEM COMPACTADA
-    // ==========================================
-    
-    function gerarCodigoSync() {
-        try {
-            const pacote = {
-                p: dbLive.pecas.map(p => [p.codigo, p.nome, p.cor, p.preco, p.vendida ? 1 : 0]),
-                v: dbLive.vendas.map(v => [v.id, v.clienteNome, v.clienteUser || "", v.fone, v.codigoPeca, v.nomePeca, v.corPeca, v.precoFinal]),
-                s: dbLive.status
-            };
-            const dadosStr = JSON.stringify(pacote);
-            const codigoComprimido = LZString.compressToBase64(dadosStr);
-            
-            const textarea = document.getElementById('sync-code-output');
-            textarea.value = codigoComprimido;
-            textarea.select();
-            navigator.clipboard.writeText(codigoComprimido);
-            alert("Código super reduzido copiado com sucesso!");
-        } catch(e) { alert("Erro ao gerar código."); }
-    }
-
-    function importarCodigoSync() {
-        const codigoB64 = document.getElementById('sync-code-input').value.trim();
-        if(!codigoB64) { alert("Cole o código primeiro!"); return; }
-        
-        if(confirm("Substituir todos os dados atuais pelo código colado?")) {
-            try {
-                const dadosStr = LZString.decompressFromBase64(codigoB64);
-                if (!dadosStr || dadosStr === "") throw new Error("Código vazio.");
-
-                const pacote = JSON.parse(dadosStr);
-                let novoDb = { pecas: [], vendas: [], status: pacote.s || {} };
-                if(pacote.p) novoDb.pecas = pacote.p.map(arr => ({codigo: arr[0], nome: arr[1], cor: arr[2], preco: arr[3], vendida: arr[4] === 1}));
-                if(pacote.v) novoDb.vendas = pacote.v.map(arr => ({id: arr[0], clienteNome: arr[1], clienteUser: arr[2], fone: arr[3], codigoPeca: arr[4], nomePeca: arr[5], corPeca: arr[6], precoFinal: arr[7], dataHora: new Date().toLocaleString('pt-BR')}));
-                
-                dbLive = novoDb;
-                salvarBanco();
-                document.getElementById('sync-code-input').value = '';
-                alert("Dados importados com sucesso!");
-                showSection('dashboard');
-            } catch(e) { alert("Código inválido. Verifique se copiou tudo."); }
-        }
-    }
-
-    // ==========================================
-    // MÓDULO: LOGÍSTICA E RENDERIZAÇÕES
-    // ==========================================
-
+    // --- LOGÍSTICA ---
     function agruparSacolas() {
-        const sacolas = {};
+        const s = {};
         dbLive.vendas.forEach(v => {
-            const nomeStr = v.clienteNome || v.cliente || "Sem Nome";
-            const chave = nomeStr.trim().toUpperCase();
-            if(!sacolas[chave]) {
-                sacolas[chave] = { nome: nomeStr, user: v.clienteUser || "", fone: v.fone, pecas: [], total: 0 };
-            }
-            sacolas[chave].pecas.push(v);
-            sacolas[chave].total += v.precoFinal;
+            const k = (v.clienteNome || "Sem Nome").trim().toUpperCase();
+            if(!s[k]) s[k] = { nome: v.clienteNome, user: v.clienteUser, fone: v.fone, pecas: [], total: 0 };
+            s[k].pecas.push(v); s[k].total += v.precoFinal;
         });
-        return sacolas;
+        return s;
     }
 
-    function formatarMoeda(valor) { return `R$ ${valor.toFixed(2).replace('.', ',')}`; }
-
-    function atualizarStatusLogistica(clienteChave, campo, valor) {
-        if(!dbLive.status[clienteChave]) dbLive.status[clienteChave] = { pago: false, forma: "", entrega: "Aguardando" };
-        if (campo === 'pago') dbLive.status[clienteChave].pago = (valor === 'true');
-        else if (campo === 'forma') dbLive.status[clienteChave].forma = valor;
-        else if (campo === 'entrega') dbLive.status[clienteChave].entrega = valor;
-        salvarBanco();
-        atualizarTelas(); 
+    function atualizarStatusLogistica(k, c, v) {
+        if(!dbLive.status[k]) dbLive.status[k] = { pago: false, forma: "", entrega: "Aguardando" };
+        if (c === 'pago') dbLive.status[k].pago = (v === 'true');
+        else dbLive.status[k][c] = v;
+        salvarBanco(); atualizarTelas(); 
     }
 
     function gerarResumoLogisticaZap() {
-        const sacolas = agruparSacolas();
-        let texto = "📊 *RESUMO LOGÍSTICA - LIVE SHOP* 📊\n\n";
-        
-        let pendentes = [];
-        let pagosEntregar = [];
-        let finalizados = [];
-
-        Object.keys(sacolas).forEach(k => {
-            const s = sacolas[k];
+        const s = agruparSacolas(); let pend = [], pago = [], fim = [];
+        Object.keys(s).forEach(k => {
             const st = dbLive.status[k] || {pago: false, entrega: "Aguardando"};
-            const desc = `🛍️ ${s.nome} - ${formatarMoeda(s.total)}`;
-            
-            if(!st.pago) pendentes.push(desc);
-            else if(st.pago && (st.entrega === "Aguardando" || st.entrega === "Pronto para Retirada")) pagosEntregar.push(desc + ` (${st.entrega})`);
-            else finalizados.push(desc);
+            const d = `🛍️ ${s[k].nome} - ${formatarMoeda(s[k].total)}`;
+            if(!st.pago) pend.push(d);
+            else if(st.pago && (st.entrega === "Aguardando" || st.entrega === "Pronto para Retirada")) pago.push(d + ` (${st.entrega})`);
+            else fim.push(d);
         });
-
-        texto += "❌ *AGUARDANDO PAGAMENTO:*\n" + (pendentes.length > 0 ? pendentes.join("\n") : "Nenhum") + "\n\n";
-        texto += "📦 *PAGO - FALTA ENTREGAR/RETIRAR:*\n" + (pagosEntregar.length > 0 ? pagosEntregar.join("\n") : "Nenhum") + "\n\n";
-        texto += "✅ *FINALIZADOS (Pago e Entregue):*\n" + (finalizados.length > 0 ? finalizados.join("\n") : "Nenhum");
-
-        const url = `https://wa.me/?text=${encodeURIComponent(texto)}`;
-        window.open(url, '_blank');
+        let t = "📊 *RESUMO LOGÍSTICA*\n\n❌ *AGUARDANDO PAGAMENTO:*\n" + (pend.length?pend.join("\n"):"Nenhum") + "\n\n📦 *PAGO - FALTA ENTREGAR:*\n" + (pago.length?pago.join("\n"):"Nenhum") + "\n\n✅ *FINALIZADOS:*\n" + (fim.length?fim.join("\n"):"Nenhum");
+        window.open(`https://wa.me/?text=${encodeURIComponent(t)}`, '_blank');
     }
 
+    // --- NUVEM ONLINE (JSONBLOB API) ---
+    async function salvarNaNuvem() {
+        document.getElementById('btn-gerar-nuvem').style.display = 'none';
+        document.getElementById('loading-nuvem').style.display = 'block';
+        try {
+            const response = await fetch("https://jsonblob.com/api/jsonBlob", {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "Accept": "application/json" },
+                body: JSON.stringify(dbLive)
+            });
+            const location = response.headers.get("Location");
+            if(location) {
+                const parts = location.split('/');
+                const idNumerico = parts[parts.length - 1]; // Pega o ID numérico gerado pelo servidor
+                document.getElementById('nuvem-codigo-gerado').value = idNumerico;
+            } else { throw new Error("Sem location"); }
+        } catch(e) { alert("Erro de conexão. Tente novamente."); }
+        document.getElementById('btn-gerar-nuvem').style.display = 'inline-block';
+        document.getElementById('loading-nuvem').style.display = 'none';
+    }
+
+    async function baixarDaNuvem() {
+        const id = document.getElementById('nuvem-codigo-importar').value.trim();
+        if(!id) { alert("Digite o código numérico!"); return; }
+        if(!confirm("Isso apagará os dados atuais. Continuar?")) return;
+
+        document.getElementById('btn-baixar-nuvem').style.display = 'none';
+        document.getElementById('loading-baixar').style.display = 'block';
+        try {
+            const response = await fetch(`https://jsonblob.com/api/jsonBlob/${id}`);
+            if(response.ok) {
+                const json = await response.json();
+                if(json.pecas && json.vendas) {
+                    dbLive = json; salvarBanco();
+                    alert("Sistema Sincronizado!");
+                    showSection('dashboard');
+                } else { throw new Error(); }
+            } else { alert("Código não encontrado na nuvem."); }
+        } catch(e) { alert("Erro ao baixar. Verifique o código numérico."); }
+        document.getElementById('btn-baixar-nuvem').style.display = 'inline-block';
+        document.getElementById('loading-baixar').style.display = 'none';
+    }
+
+    // --- ATUALIZA TUDO ---
     function atualizarTelas() {
         atualizarCodigoGerado();
 
-        // ABA PEÇAS
-        const tbodyPecas = document.getElementById('lista-pecas');
-        tbodyPecas.innerHTML = "";
-        const pecasOrdenadas = [...dbLive.pecas].sort((a,b) => a.preco - b.preco);
-        pecasOrdenadas.forEach((p) => {
-            let statusBadge = p.vendida ? `<span class="badge bg-red" style="font-size:0.65rem;">Vendida</span>` : `<span class="badge bg-green" style="font-size:0.65rem;">Livre</span>`;
-            tbodyPecas.innerHTML += `
-                <tr>
-                    <td><span class="badge bg-pink" style="font-size:0.85rem;">${p.codigo}</span></td>
-                    <td style="font-weight:700;">${p.nome} ${statusBadge}</td>
-                    <td>${p.cor}</td>
-                    <td style="color:var(--success); font-weight:bold;">${formatarMoeda(p.preco)}</td>
-                    <td style="text-align: right;"><button onclick="deletarPeca('${p.codigo}')" class="btn-delete" title="Apagar Peça"><i class="fa-solid fa-trash"></i></button></td>
-                </tr>
-            `;
+        // Peças
+        const tPecas = document.getElementById('lista-pecas'); tPecas.innerHTML = "";
+        [...dbLive.pecas].sort((a,b) => a.preco - b.preco).forEach(p => {
+            let b = p.vendida ? `<span class="badge bg-red">Vendida</span>` : `<span class="badge bg-green">Livre</span>`;
+            tPecas.innerHTML += `<tr>
+                <td><span class="badge bg-pink">${p.codigo}</span></td>
+                <td><strong>${p.nome}</strong> ${b}<br><span style="font-size:0.8rem; color:#64748b">${p.cor}</span></td>
+                <td style="color:var(--success); font-weight:bold;">${formatarMoeda(p.preco)}</td>
+                <td style="text-align: right;">
+                    <button onclick="imprimirEtiquetaArgox('${p.codigo}', '${p.nome.replace(/'/g,"\\'").substring(0,25)}', ${p.preco})" class="btn-action btn-print" title="Imprimir Etiqueta Argox"><i class="fa-solid fa-print"></i></button>
+                    <button onclick="deletarPeca('${p.codigo}')" class="btn-action btn-delete" title="Apagar Peça"><i class="fa-solid fa-trash"></i></button>
+                </td>
+            </tr>`;
         });
-        if(dbLive.pecas.length === 0) tbodyPecas.innerHTML = "<tr><td colspan='5' style='text-align:center;'>Nenhuma peça cadastrada.</td></tr>";
 
-        // ABA DASHBOARD
-        let totalFaturado = 0;
-        const tbodyDashboard = document.getElementById('lista-ultimas-vendas');
-        tbodyDashboard.innerHTML = "";
+        // Dashboard
+        let tFat = 0; const tDash = document.getElementById('lista-ultimas-vendas'); tDash.innerHTML = "";
         dbLive.vendas.slice().reverse().forEach(v => {
-            totalFaturado += v.precoFinal;
-            let displayCliente = v.clienteUser ? `${v.clienteNome} <span style="font-size:0.8rem; color:#94a3b8;">(${v.clienteUser})</span>` : v.clienteNome;
-            tbodyDashboard.innerHTML += `
-                <tr>
-                    <td style="font-weight: 700;">${displayCliente}</td>
-                    <td><span style="color:var(--accent); font-weight:800; font-size:0.8rem;">${v.codigoPeca}</span><br>${v.nomePeca}</td>
-                    <td>${v.corPeca}</td>
-                    <td style="text-align: right; font-weight:bold; color:var(--success);">${formatarMoeda(v.precoFinal)}</td>
-                </tr>
-            `;
+            tFat += v.precoFinal;
+            tDash.innerHTML += `<tr><td><strong>${v.clienteNome}</strong></td><td><span style="color:var(--accent); font-weight:800; font-size:0.8rem;">${v.codigoPeca}</span><br>${v.nomePeca}</td><td>${v.corPeca}</td><td style="text-align: right; font-weight:bold; color:var(--success);">${formatarMoeda(v.precoFinal)}</td></tr>`;
         });
-        document.getElementById('dash-total-vendas').innerText = formatarMoeda(totalFaturado);
+        document.getElementById('dash-total-vendas').innerText = formatarMoeda(tFat);
         document.getElementById('dash-qtd-pecas').innerText = dbLive.vendas.length;
-        if(dbLive.vendas.length === 0) tbodyDashboard.innerHTML = "<tr><td colspan='4' style='text-align:center;'>Nenhum arremate ainda.</td></tr>";
 
-        // ABA SACOLAS E LOGÍSTICA
-        const containerSacolas = document.getElementById('container-sacolas');
-        const tbodyLogistica = document.getElementById('lista-logistica');
-        containerSacolas.innerHTML = "";
-        tbodyLogistica.innerHTML = "";
-
+        // Sacolas & Logistica
+        const cSacolas = document.getElementById('container-sacolas'); cSacolas.innerHTML = "";
+        const tLog = document.getElementById('lista-logistica'); tLog.innerHTML = "";
         const sacolas = agruparSacolas();
-        const chaves = Object.keys(sacolas);
         
-        if(chaves.length === 0) {
-            containerSacolas.innerHTML = "<div class='card' style='text-align:center; color:#94a3b8;'>Nenhuma sacola aberta ainda.</div>";
-            tbodyLogistica.innerHTML = "<tr><td colspan='5' style='text-align:center;'>Nenhuma venda registrada.</td></tr>";
-        } else {
-            chaves.forEach(chave => {
-                const sacola = sacolas[chave];
-                
-                // MENSAGEM 1: COBRANÇA PADRÃO
-                let msgCobranca = `Oiii *${sacola.nome}*! Tudo bem? 💖✨\n\nPassando pra te mandar o resumo maravilhoso das peças que você garantiu na nossa Live! 🥰🛍️\n\n`;
-                sacola.pecas.forEach(p => { msgCobranca += `👗 *${p.codigoPeca}* | ${p.nomePeca} (${p.corPeca})\n👉 *${formatarMoeda(p.precoFinal)}*\n\n`; });
-                msgCobranca += `💰 *TOTAL DA SUA SACOLA: ${formatarMoeda(sacola.total)}*\n\n⚠️ Você tem até *24 horas* para realizar o pagamento e garantir suas peças, tá bom? ⏳🏃‍♀️\n\nMe conta, amor: Qual vai ser a *forma de pagamento*? E como prefere fazer a *retirada/envio*? 📦🚗\n\n_(Lembrando que pagamentos via maquininha possuem acréscimo das taxas)_ 😉😘`;
-                const linkCobranca = `https://wa.me/55${sacola.fone.replace(/\D/g,'')}?text=${encodeURIComponent(msgCobranca)}`;
-
-                // MENSAGEM 2: AVISO CANCELAMENTO / PERDA DE PRIORIDADE
-                let msgAviso = `Oiii *${sacola.nome}*! 🥺 Passando pra avisar que sua sacola está aguardando fechamento. 🛍️\n\nComo as peças são muito exclusivas, precisamos liberar o estoque caso a sacola não seja finalizada em breve.\n\n⚠️ Lembrando amor, que cancelamentos sem aviso prévio fazem com que você *perca a prioridade de compra* nas nossas próximas Lives, tá bom? 😔\n\nMe avisa se podemos finalizar e garantir seus looks! 💖✨`;
-                const linkAviso = `https://wa.me/55${sacola.fone.replace(/\D/g,'')}?text=${encodeURIComponent(msgAviso)}`;
-
-                // MENSAGEM 3: PÓS-VENDA
-                let msgPosVenda = `Oiii *${sacola.nome}*! 🥰💖\n\nPassando aqui pra te agradecer de todo o coração por ter participado da nossa Live e garantido suas peças! Foi incrível ter você com a gente. ✨🛍️\n\nEspero que você ame muito cada detalhe. Quando usar, não esquece de marcar a gente lá no Instagram, vou amar ver você arrasando com nossos looks! 😍📸\n\nUm beijão enorme e até a próxima Live! 😘💖`;
-                const linkPosVenda = `https://wa.me/55${sacola.fone.replace(/\D/g,'')}?text=${encodeURIComponent(msgPosVenda)}`;
-
-                const styleBtnZap = sacola.fone ? '' : 'opacity: 0.5; pointer-events: none;';
-
-                let htmlPecas = '';
-                sacola.pecas.forEach(p => {
-                    htmlPecas += `
-                        <div style="display:flex; justify-content:space-between; padding: 10px 0; border-bottom: 1px solid #f1f5f9;">
-                            <div><span class="badge bg-pink" style="font-size:0.7rem; margin-right:5px;">${p.codigoPeca}</span> ${p.nomePeca} <span style="color:#94a3b8; font-size:0.85rem;">(${p.corPeca})</span></div>
-                            <div style="display:flex; align-items:center; gap: 15px;">
-                                <div style="font-weight:600;">${formatarMoeda(p.precoFinal)}</div>
-                                <button onclick="deletarVenda(${p.id})" style="background:none; border:none; color:var(--danger); cursor:pointer;" title="Cancelar Peça"><i class="fa-solid fa-xmark"></i></button>
-                            </div>
-                        </div>
-                    `;
-                });
-
-                containerSacolas.innerHTML += `
-                    <div class="resumo-cliente">
-                        <div class="resumo-header">
-                            <div>
-                                <h4><i class="fa-solid fa-bag-shopping" style="color:var(--accent); margin-right:8px;"></i> ${sacola.nome}</h4>
-                                <span style="font-size:0.85rem; color:#64748b;">${sacola.pecas.length} peça(s) na sacola</span>
-                            </div>
-                            <h3 style="margin:0; color:var(--success);">${formatarMoeda(sacola.total)}</h3>
-                        </div>
-                        <div style="margin-bottom: 1rem;">${htmlPecas}</div>
-                        <div class="zap-group">
-                            <a href="${sacola.fone ? linkCobranca : '#'}" target="_blank" class="btn-whatsapp zap-cobranca" style="${styleBtnZap}"><i class="fa-brands fa-whatsapp"></i> Cobrar Sacola</a>
-                            <a href="${sacola.fone ? linkAviso : '#'}" target="_blank" class="btn-whatsapp zap-aviso" style="${styleBtnZap}"><i class="fa-solid fa-triangle-exclamation"></i> Aviso de Cancelamento</a>
-                            <a href="${sacola.fone ? linkPosVenda : '#'}" target="_blank" class="btn-whatsapp zap-posvenda" style="${styleBtnZap}"><i class="fa-solid fa-heart"></i> Pós-Venda Fofo</a>
-                        </div>
-                    </div>
-                `;
-
-                // LOGISTICA
-                let status = dbLive.status[chave] || { pago: false, forma: "", entrega: "Aguardando" };
-                let selectPgtoClass = status.pago ? 'status-pago' : 'status-pendente';
-                let selectEntregaClass = status.entrega.includes("Entregue") || status.entrega.includes("Enviado") ? 'status-pago' : (status.entrega.includes("Pronto") ? 'status-neutro' : 'status-pendente');
-
-                tbodyLogistica.innerHTML += `
-                    <tr>
-                        <td style="font-weight: 700;">${sacola.nome} <br><span style="font-size:0.75rem; color:#64748b; font-weight:normal;">${sacola.pecas.length} peças</span></td>
-                        <td style="font-weight: bold;">${formatarMoeda(sacola.total)}</td>
-                        <td>
-                            <select class="status-select ${selectPgtoClass}" onchange="atualizarStatusLogistica('${chave}', 'pago', this.value)">
-                                <option value="false" ${!status.pago ? 'selected' : ''}>❌ Pendente</option>
-                                <option value="true" ${status.pago ? 'selected' : ''}>✅ Pago</option>
-                            </select>
-                        </td>
-                        <td>
-                            <select class="status-select status-neutro" onchange="atualizarStatusLogistica('${chave}', 'forma', this.value)">
-                                <option value="" ${status.forma === '' ? 'selected' : ''}>-- Informar --</option>
-                                <option value="PIX" ${status.forma === 'PIX' ? 'selected' : ''}>PIX</option>
-                                <option value="Cartão" ${status.forma === 'Cartão' ? 'selected' : ''}>Cartão (Link/Maq)</option>
-                                <option value="Dinheiro" ${status.forma === 'Dinheiro' ? 'selected' : ''}>Dinheiro</option>
-                            </select>
-                        </td>
-                        <td>
-                            <select class="status-select ${selectEntregaClass}" onchange="atualizarStatusLogistica('${chave}', 'entrega', this.value)">
-                                <option value="Aguardando" ${status.entrega === 'Aguardando' ? 'selected' : ''}>⏳ Aguardando</option>
-                                <option value="Pronto para Retirada" ${status.entrega === 'Pronto para Retirada' ? 'selected' : ''}>🛍️ Pronto p/ Retirada</option>
-                                <option value="Enviado/Entregue" ${status.entrega === 'Enviado/Entregue' ? 'selected' : ''}>🚚 Enviado/Entregue</option>
-                            </select>
-                        </td>
-                    </tr>
-                `;
+        Object.keys(sacolas).forEach(k => {
+            const s = sacolas[k];
+            let msgC = `Oiii *${s.nome}*! Tudo bem? 💖✨\n\nResumo da nossa Live! 🥰🛍️\n\n`;
+            let hPecas = '';
+            s.pecas.forEach(p => { 
+                msgC += `👗 *${p.codigoPeca}* | ${p.nomePeca}\n👉 *${formatarMoeda(p.precoFinal)}*\n\n`;
+                hPecas += `<div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #eee;">
+                    <div><span class="badge bg-pink" style="font-size:0.6rem; margin-right:5px;">${p.codigoPeca}</span> ${p.nomePeca}</div>
+                    <div><strong>${formatarMoeda(p.precoFinal)}</strong> <button onclick="deletarVenda(${p.id})" style="background:none;border:none;color:var(--danger);cursor:pointer;"><i class="fa-solid fa-xmark"></i></button></div>
+                </div>`;
             });
-        }
+            msgC += `💰 *TOTAL: ${formatarMoeda(s.total)}*\n\n⚠️ Prazo de *24 horas* para pagamento, tá bom? ⏳\n\nMe conta: Qual a *forma de pagamento* e prefere *retirada ou envio*? 📦🚗\n\n_(Links/Maquininha possuem taxas da plataforma)_ 😉😘`;
+            
+            let msgA = `Oiii *${s.nome}*! 🥺 Sua sacola aguarda fechamento. 🛍️\n\n⚠️ Lembrando que cancelamentos sem aviso fazem com que você *perca a prioridade* nas próximas Lives. 😔\n\nMe avisa se podemos finalizar e garantir seus looks! 💖`;
+            let msgP = `Oiii *${s.nome}*! 🥰💖\n\nPassando pra te agradecer de todo o coração pela compra! Foi incrível ter você na Live. ✨🛍️\n\nEspero que ame tudo. Quando usar, não esquece de marcar a gente no Instagram! 😍📸\n\nUm beijão enorme! 😘💖`;
+
+            let lnkC = `https://wa.me/55${s.fone.replace(/\D/g,'')}?text=${encodeURIComponent(msgC)}`;
+            let lnkA = `https://wa.me/55${s.fone.replace(/\D/g,'')}?text=${encodeURIComponent(msgA)}`;
+            let lnkP = `https://wa.me/55${s.fone.replace(/\D/g,'')}?text=${encodeURIComponent(msgP)}`;
+            let stBtn = s.fone ? '' : 'opacity:0.5; pointer-events:none;';
+
+            cSacolas.innerHTML += `<div class="resumo-cliente">
+                <div class="resumo-header"><div><h4>${s.nome}</h4><span>${s.pecas.length} peças</span></div><h3 style="color:var(--success); margin:0;">${formatarMoeda(s.total)}</h3></div>
+                <div style="margin-bottom: 1rem;">${hPecas}</div>
+                <div class="zap-group">
+                    <a href="${lnkC}" target="_blank" class="btn-whatsapp zap-cobranca" style="${stBtn}"><i class="fa-brands fa-whatsapp"></i> Cobrar</a>
+                    <a href="${lnkA}" target="_blank" class="btn-whatsapp zap-aviso" style="${stBtn}">Aviso Cancela.</a>
+                    <a href="${lnkP}" target="_blank" class="btn-whatsapp zap-posvenda" style="${stBtn}"><i class="fa-solid fa-heart"></i> Pós-Venda</a>
+                </div>
+            </div>`;
+
+            let st = dbLive.status[k] || {pago:false, forma:"", entrega:"Aguardando"};
+            let cssPg = st.pago ? 'status-pago' : 'status-pendente';
+            let cssEn = st.entrega.includes("Entregue") ? 'status-pago' : (st.entrega.includes("Pronto") ? 'status-neutro' : 'status-pendente');
+
+            tLog.innerHTML += `<tr>
+                <td><strong>${s.nome}</strong></td><td><strong>${formatarMoeda(s.total)}</strong></td>
+                <td><select class="status-select ${cssPg}" onchange="atualizarStatusLogistica('${k}', 'pago', this.value)"><option value="false" ${!st.pago?'selected':''}>❌ Pendente</option><option value="true" ${st.pago?'selected':''}>✅ Pago</option></select></td>
+                <td><select class="status-select status-neutro" onchange="atualizarStatusLogistica('${k}', 'forma', this.value)"><option value="" ${st.forma===''?'selected':''}>--</option><option value="PIX" ${st.forma==='PIX'?'selected':''}>PIX</option><option value="Cartão" ${st.forma==='Cartão'?'selected':''}>Cartão</option><option value="Dinheiro" ${st.forma==='Dinheiro'?'selected':''}>Dinheiro</option></select></td>
+                <td><select class="status-select ${cssEn}" onchange="atualizarStatusLogistica('${k}', 'entrega', this.value)"><option value="Aguardando" ${st.entrega==='Aguardando'?'selected':''}>⏳ Aguardando</option><option value="Pronto para Retirada" ${st.entrega==='Pronto para Retirada'?'selected':''}>🛍️ Pronto Retirada</option><option value="Enviado/Entregue" ${st.entrega==='Enviado/Entregue'?'selected':''}>🚚 Entregue</option></select></td>
+            </tr>`;
+        });
     }
 
     function limparLive() {
-        if(confirm("CUIDADO: Isso vai apagar TODAS as vendas, TODOS os status e TODAS as peças para iniciar uma Live limpa. Tem certeza?")) {
-            dbLive = { pecas: [], vendas: [], status: {} };
-            salvarBanco();
-            atualizarTelas();
-            alert("Sistema limpo! Tudo pronto para uma nova Live Shop.");
+        if(confirm("Apagar TODAS as vendas e peças para uma nova Live?")) {
+            dbLive = { pecas: [], vendas: [], status: {} }; salvarBanco(); atualizarTelas();
         }
     }
 
-    window.onload = () => {
-        atualizarTelas();
-        showSection('dashboard');
-    };
-
+    window.onload = () => { atualizarTelas(); showSection('dashboard'); };
 </script>
 </body>
 </html>
