@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mania Forever - Sistema Live Shop</title>
+    <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23ec4899'/><text x='50%' y='53%' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='38' font-weight='900' fill='%23fff'>MF</text></svg>">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        :root {
+            --sidebar-bg: #000000; --sidebar-text: #ffffff;
+            --main-bg: #f8fafc; --card-bg: #ffffff;
+            --primary: #000000; --accent: #ec4899; /* Rosa/Pink para o Live Shop */
+            --accent-hover: #db2777; --accent-light: #fce7f3;
+            --success: #10b981; --danger: #ef4444; --border: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+            --radius-md: 10px; --radius-lg: 16px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background: var(--main-bg); display: flex; flex-direction: column; min-height: 100vh; color: #0f172a; overflow-x: hidden; }
+
+        /* HEADER MOBILE */
+        .mobile-header { display: none; padding: 1rem 1.5rem; background: var(--sidebar-bg); color: white; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 2000; width: 100%; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .mobile-header .logo { font-weight: 900; font-size: 1.5rem; margin: 0; }
+        .mobile-header .logo span { color: var(--accent); }
+
+        #mobile-overlay { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.6); z-index: 1400; opacity: 0; transition: opacity 0.3s; }
+        #mobile-overlay.active { display: block; opacity: 1; }
+
+        /* MENU LATERAL */
+        .sidebar { width: 260px; background: var(--sidebar-bg); color: var(--sidebar-text); display: flex; flex-direction: column; padding: 2.5rem 1.5rem; position: fixed; height: 100vh; z-index: 1500; transition: transform 0.3s ease; }
+        .sidebar .logo { font-weight: 900; font-size: 1.4rem; margin-bottom: 3.5rem; letter-spacing: -1px; text-transform: uppercase; line-height: 1.1; }
+        .sidebar .logo span { color: var(--accent); display: block; font-size: 1.8rem;}
+        
+        .nav-item { padding: 14px 16px; border-radius: var(--radius-md); cursor: pointer; display: flex; align-items: center; gap: 14px; margin-bottom: 8px; transition: all 0.2s ease; color: #94a3b8; font-weight: 500; font-size: 0.95rem; }
+        .nav-item i { width: 20px; text-align: center; font-size: 1.1rem; }
+        .nav-item:hover, .nav-item.active { background: rgba(236, 72, 153, 0.15); color: var(--accent); }
+        .nav-item.active { font-weight: 700; position: relative; }
+        .nav-item.active::before { content: ''; position: absolute; left: 0; top: 25%; height: 50%; width: 4px; background: var(--accent); border-radius: 0 4px 4px 0; }
+        
+        .main-content { margin-left: 260px; flex: 1; padding: 3rem; overflow-x: hidden; width: calc(100% - 260px); }
+        .section { display: none; animation: fadeIn 0.25s ease-out; width: 100%; max-width: 100%; }
+        .section.active { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+        h2 { font-size: 2rem; font-weight: 800; margin-bottom: 2.5rem; color: #0f172a; letter-spacing: -0.025em; word-break: break-word;}
+        h3 { font-size: 1.25rem; font-weight: 700; margin-bottom: 1.25rem; color: #1e293b; word-break: break-word;}
+
+        .card { background: var(--card-bg); padding: 1.75rem; border-radius: var(--radius-lg); border: 1px solid var(--border); box-shadow: var(--shadow); margin-bottom: 2rem; width: 100%; max-width: 100%; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; width: 100%; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; width: 100%; }
+        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; width: 100%; }
+
+        .input-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem; width: 100%; }
+        .input-group { margin-bottom: 1.25rem; display: flex; flex-direction: column; width: 100%; }
+        label { font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: #475569; text-transform: uppercase; letter-spacing: 0.5px;}
+        input, select, textarea { width: 100%; padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--radius-md); font-size: 0.95rem; outline: none; transition: 0.2s; background: #fff; color: #0f172a; }
+        input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.2); }
+        input[readonly] { background: #f1f5f9; cursor: not-allowed; font-weight: bold; color: var(--accent); }
+
+        .btn-primary { background: var(--primary); color: #fff; padding: 14px 28px; border-radius: var(--radius-md); border: none; cursor: pointer; font-weight: 600; font-size: 0.95rem; transition: all 0.2s; width: 100%; text-align: center; }
+        .btn-primary:hover { background: var(--accent); color: #fff; }
+        .btn-success { background: var(--success); color: #fff; padding: 14px 28px; border-radius: var(--radius-md); border: none; cursor: pointer; font-weight: 800; font-size: 1rem; transition: all 0.2s; width: 100%; }
+        .btn-success:hover { filter: brightness(1.1); }
+
+        .table-container { width: 100%; max-width: 100vw; overflow-x: auto; display: block; -webkit-overflow-scrolling: touch; }
+        table { width: 100%; border-collapse: collapse; min-width: 600px; }
+        th { text-align: left; padding: 12px 16px; font-size: 0.75rem; text-transform: uppercase; color: #64748b; border-bottom: 2px solid var(--border); background: #f8fafc; font-weight: 700; white-space: nowrap; }
+        td { padding: 16px; border-bottom: 1px solid var(--border); font-size: 0.95rem; color: #334155; vertical-align: middle; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: var(--accent-light); }
+        
+        .badge { padding: 6px 12px; border-radius: 99px; font-size: 0.75rem; font-weight: 700; display: inline-block; text-transform: uppercase; white-space: nowrap; }
+        .bg-pink { background: #fce7f3; color: #be185d; }
+        .bg-green { background: #dcfce7; color: #15803d; }
+        .bg-gray { background: #f1f5f9; color: #475569; }
+
+        .btn-delete { background: transparent; color: #94a3b8; border: none; cursor: pointer; font-size: 1.2rem; padding: 4px 8px; border-radius: 4px; transition: 0.2s; }
+        .btn-delete:hover { color: var(--danger); background: #fee2e2; }
+
+        .resumo-cliente { border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.5rem; margin-bottom: 1rem; background: #fff; }
+        .resumo-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--accent-light); padding-bottom: 1rem; margin-bottom: 1rem; }
+        .resumo-header h4 { font-size: 1.2rem; margin: 0; color: var(--primary); }
+        .btn-whatsapp { background: #25D366; color: white; padding: 8px 16px; border-radius: 99px; font-weight: 700; font-size: 0.85rem; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; border: none; cursor: pointer;}
+        .btn-whatsapp:hover { filter: brightness(1.1); }
+
+        @media (max-width: 900px) {
+            body { flex-direction: column; }
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.active { transform: translateX(0); }
+            .mobile-header { display: flex; }
+            .main-content { margin-left: 0; padding: 1.25rem 1rem; width: 100%; max-width: 100vw; }
+            .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr !important; gap: 1rem !important; }
+            .input-grid { grid-template-columns: 1fr !important; gap: 0; }
+            h2 { font-size: 1.6rem; margin-bottom: 1.5rem; }
+            .card { padding: 1.25rem; margin-bottom: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="mobile-header">
+        <div class="logo">MANIA FOREVER<span>LIVE SHOP</span></div>
+        <button onclick="toggleMenu()" style="background:none; border:none; color:white; font-size:1.5rem; cursor:pointer; padding:5px;"><i class="fa-solid fa-bars"></i></button>
+    </div>
+    <div id="mobile-overlay" onclick="toggleMenu()"></div>
+
+    <div class="sidebar" id="sidebar">
+        <div class="logo">MANIA FOREVER<span>LIVE SHOP</span></div>
+        
+        <div class="nav-item active" onclick="showSection('dashboard')"><i class="fa-solid fa-chart-line"></i> Vendas no Total</div>
+        <div class="nav-item" onclick="showSection('pecas')"><i class="fa-solid fa-shirt"></i> Peças da Live</div>
+        <div class="nav-item" onclick="showSection('lancamento')"><i class="fa-solid fa-cart-arrow-down"></i> Lançamento de Vendas</div>
+        <div class="nav-item" onclick="showSection('por-pessoa')"><i class="fa-solid fa-users"></i> Venda por Pessoa</div>
+        
+        <div class="nav-item" onclick="limparLive()" style="margin-top: auto; color: var(--danger);"><i class="fa-solid fa-trash-can"></i> Encerrar/Limpar Live</div>
+    </div>
+
+    <div class="main-content">
+        
+        <div id="dashboard" class="section active">
+            <h2>Visão Geral da Live</h2>
+            <div class="grid-2">
+                <div class="card" style="border-left: 4px solid var(--accent); background: var(--primary); color: white;">
+                    <h3 style="color: #94a3b8; font-size: 1rem;">Faturamento em Tempo Real</h3>
+                    <h2 id="dash-total-vendas" style="color: var(--accent); margin:0; font-size: 2.5rem;">R$ 0,00</h2>
+                </div>
+                <div class="card" style="border-left: 4px solid var(--success);">
+                    <h3 style="color: #64748b; font-size: 1rem;">Peças Arrematadas</h3>
+                    <h2 id="dash-qtd-pecas" style="color: var(--success); margin:0; font-size: 2.5rem;">0</h2>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Últimos Lançamentos (Tempo Real)</h3>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr><th>Cliente</th><th>Peça</th><th>Cor/Tamanho</th><th style="text-align: right;">Valor</th></tr>
+                        </thead>
+                        <tbody id="lista-ultimas-vendas"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="pecas" class="section">
+            <h2>Estoque / Peças da Live</h2>
+            
+            <div class="card">
+                <h3>Cadastrar Nova Peça</h3>
+                <form onsubmit="event.preventDefault(); cadastrarPeca();">
+                    <div class="grid-4" style="align-items: end;">
+                        <div class="input-group">
+                            <label>Código Gerado</label>
+                            <input type="text" id="peca-codigo" readonly value="MF-001">
+                        </div>
+                        <div class="input-group">
+                            <label>Nome da Peça</label>
+                            <input type="text" id="peca-nome" required placeholder="Ex: Vestido Estampado">
+                        </div>
+                        <div class="input-group">
+                            <label>Cor / Tamanho</label>
+                            <input type="text" id="peca-cor" required placeholder="Ex: Preto M">
+                        </div>
+                        <div class="input-group">
+                            <label>Preço (R$)</label>
+                            <input type="number" step="0.01" id="peca-preco" required placeholder="0.00">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-primary" style="margin-top: 10px;"><i class="fa-solid fa-plus"></i> Adicionar Peça à Live</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h3>Catálogo de Peças Registradas</h3>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr><th>Código</th><th>Peça</th><th>Detalhes</th><th>Preço</th><th style="text-align: right;">Ações</th></tr>
+                        </thead>
+                        <tbody id="lista-pecas"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="lancamento" class="section">
+            <h2>Lançamento Rápido</h2>
+            <p style="color: #64748b; margin-bottom: 2rem;">Digite o código da peça arrematada na live para puxar os dados automaticamente e atribuir à cliente.</p>
+
+            <div class="card" style="border: 2px solid var(--accent-light);">
+                <form onsubmit="event.preventDefault(); registrarVenda();">
+                    
+                    <div class="grid-2">
+                        <div style="background: #f8fafc; padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--border);">
+                            <h4 style="margin-bottom: 1rem; color: var(--primary);"><i class="fa-solid fa-user"></i> Quem arrematou?</h4>
+                            <div class="input-group">
+                                <label>Nome da Cliente / User</label>
+                                <input type="text" id="venda-cliente-nome" required placeholder="Ex: @renata_silva">
+                            </div>
+                            <div class="input-group" style="margin-bottom: 0;">
+                                <label>WhatsApp (Opcional)</label>
+                                <input type="text" id="venda-cliente-fone" placeholder="(XX) 9XXXX-XXXX">
+                            </div>
+                        </div>
+
+                        <div style="background: #fff; padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--accent);">
+                            <h4 style="margin-bottom: 1rem; color: var(--accent);"><i class="fa-solid fa-tag"></i> Qual a peça?</h4>
+                            
+                            <div class="input-group">
+                                <label style="color: var(--accent);">Código da Peça</label>
+                                <input type="text" id="venda-codigo-busca" required placeholder="Digite o cód (Ex: MF-001)" oninput="buscarPecaPorCodigo()" autocomplete="off" style="border-color: var(--accent); font-weight: bold; text-transform: uppercase;">
+                            </div>
+
+                            <div id="preview-peca" style="display: none; padding: 10px; background: var(--accent-light); border-radius: 8px; margin-bottom: 1rem;">
+                                <div style="font-weight: 800; font-size: 1.1rem;" id="preview-nome">NOME DA PEÇA</div>
+                                <div style="color: #be185d; font-size: 0.9rem;" id="preview-cor">Cor/Tamanho</div>
+                                <div style="font-weight: 800; font-size: 1.2rem; margin-top: 5px;" id="preview-preco">R$ 0,00</div>
+                            </div>
+
+                            <button type="submit" class="btn-success" id="btn-confirmar-venda" disabled><i class="fa-solid fa-check-circle"></i> Confirmar Arremate</button>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+
+        <div id="por-pessoa" class="section">
+            <h2>Fechamento de Sacolas</h2>
+            <p style="color: #64748b; margin-bottom: 2rem;">Veja o resumo de cada cliente para enviar o total no WhatsApp após a Live.</p>
+
+            <div id="container-sacolas">
+                </div>
+        </div>
+
+    </div>
+
+<script>
+    // BANCO DE DADOS LOCAL
+    let dbLive = JSON.parse(localStorage.getItem('mania_forever_live')) || { pecas: [], vendas: [] };
+    let pecaSelecionadaParaVenda = null;
+
+    function salvarBanco() {
+        localStorage.setItem('mania_forever_live', JSON.stringify(dbLive));
+    }
+
+    // NAVEGAÇÃO
+    function toggleMenu() { 
+        document.getElementById('sidebar').classList.toggle('active'); 
+        document.getElementById('mobile-overlay').classList.toggle('active');
+    }
+
+    function showSection(id) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        
+        document.getElementById(id).classList.add('active');
+        document.querySelector(`[onclick="showSection('${id}')"]`).classList.add('active');
+        
+        if(window.innerWidth <= 900) {
+            document.getElementById('sidebar').classList.remove('active');
+            document.getElementById('mobile-overlay').classList.remove('active');
+        }
+        
+        atualizarTelas();
+    }
+
+    // ==========================================
+    // MÓDULO: PEÇAS (CADASTRO E LISTAGEM)
+    // ==========================================
+    
+    function atualizarCodigoGerado() {
+        // Gera o código ex: MF-001, MF-002 sequencialmente
+        const proximoNumero = dbLive.pecas.length + 1;
+        const cod = "MF-" + proximoNumero.toString().padStart(3, '0');
+        document.getElementById('peca-codigo').value = cod;
+    }
+
+    function cadastrarPeca() {
+        const codigo = document.getElementById('peca-codigo').value;
+        const nome = document.getElementById('peca-nome').value;
+        const cor = document.getElementById('peca-cor').value;
+        const preco = parseFloat(document.getElementById('peca-preco').value);
+
+        dbLive.pecas.push({ codigo, nome, cor, preco, vendida: false });
+        salvarBanco();
+        
+        document.getElementById('peca-nome').value = '';
+        document.getElementById('peca-cor').value = '';
+        document.getElementById('peca-preco').value = '';
+        
+        atualizarTelas();
+        alert(`Peça ${codigo} cadastrada com sucesso!`);
+    }
+
+    function deletarPeca(index) {
+        if(confirm("Deseja realmente apagar esta peça do catálogo?")) {
+            dbLive.pecas.splice(index, 1);
+            salvarBanco();
+            atualizarTelas();
+        }
+    }
+
+    // ==========================================
+    // MÓDULO: LANÇAMENTO (SISTEMA DE BUSCA AUTOMÁTICA)
+    // ==========================================
+
+    function buscarPecaPorCodigo() {
+        const inputBusca = document.getElementById('venda-codigo-busca').value.toUpperCase().trim();
+        const previewDiv = document.getElementById('preview-peca');
+        const btnConfirmar = document.getElementById('btn-confirmar-venda');
+        
+        // Procura a peça no banco que tenha exatamente o código e que AINDA NÃO FOI VENDIDA
+        const pecaEncontrada = dbLive.pecas.find(p => p.codigo.toUpperCase() === inputBusca);
+
+        if (pecaEncontrada) {
+            pecaSelecionadaParaVenda = pecaEncontrada;
+            
+            document.getElementById('preview-nome').innerText = pecaEncontrada.nome;
+            document.getElementById('preview-cor').innerText = pecaEncontrada.cor;
+            document.getElementById('preview-preco').innerText = `R$ ${pecaEncontrada.preco.toFixed(2).replace('.', ',')}`;
+            
+            previewDiv.style.display = 'block';
+            btnConfirmar.disabled = false;
+        } else {
+            pecaSelecionadaParaVenda = null;
+            previewDiv.style.display = 'none';
+            btnConfirmar.disabled = true;
+        }
+    }
+
+    function registrarVenda() {
+        if(!pecaSelecionadaParaVenda) return;
+
+        const clienteNome = document.getElementById('venda-cliente-nome').value.trim();
+        const clienteFone = document.getElementById('venda-cliente-fone').value.trim();
+
+        // Registra a venda
+        dbLive.vendas.push({
+            id: Date.now(),
+            cliente: clienteNome,
+            fone: clienteFone,
+            codigoPeca: pecaSelecionadaParaVenda.codigo,
+            nomePeca: pecaSelecionadaParaVenda.nome,
+            corPeca: pecaSelecionadaParaVenda.cor,
+            precoFinal: pecaSelecionadaParaVenda.preco,
+            dataHora: new Date().toLocaleString('pt-BR')
+        });
+
+        // Opcional: Marcar a peça como "vendida" para não ser arrematada de novo por engano
+        // const idx = dbLive.pecas.findIndex(p => p.codigo === pecaSelecionadaParaVenda.codigo);
+        // if(idx > -1) dbLive.pecas[idx].vendida = true;
+
+        salvarBanco();
+        
+        // Limpa o campo da peça para o próximo arremate, mas MANTÉM o nome da cliente 
+        // caso ela pegue várias peças seguidas!
+        document.getElementById('venda-codigo-busca').value = '';
+        buscarPecaPorCodigo(); // Esconde o preview
+        
+        atualizarTelas();
+        
+        // Efeito visual de sucesso
+        const btn = document.getElementById('btn-confirmar-venda');
+        btn.innerHTML = "<i class='fa-solid fa-check'></i> Arrematado!";
+        setTimeout(() => { btn.innerHTML = "<i class='fa-solid fa-check-circle'></i> Confirmar Arremate"; }, 1500);
+    }
+
+    function deletarVenda(idVenda) {
+        if(confirm("Cancelar este arremate?")) {
+            dbLive.vendas = dbLive.vendas.filter(v => v.id !== idVenda);
+            salvarBanco();
+            atualizarTelas();
+        }
+    }
+
+    // ==========================================
+    // MÓDULO: RENDERIZAÇÕES (ATUALIZAR TELAS)
+    // ==========================================
+
+    function formatarMoeda(valor) {
+        return `R$ ${valor.toFixed(2).replace('.', ',')}`;
+    }
+
+    function atualizarTelas() {
+        atualizarCodigoGerado();
+
+        // 1. ABA PEÇAS (CATÁLOGO)
+        const tbodyPecas = document.getElementById('lista-pecas');
+        tbodyPecas.innerHTML = "";
+        dbLive.pecas.slice().reverse().forEach((p, index) => {
+            const idxReal = dbLive.pecas.length - 1 - index;
+            tbodyPecas.innerHTML += `
+                <tr>
+                    <td><span class="badge bg-pink" style="font-size:0.85rem;">${p.codigo}</span></td>
+                    <td style="font-weight:700;">${p.nome}</td>
+                    <td>${p.cor}</td>
+                    <td style="color:var(--success); font-weight:bold;">${formatarMoeda(p.preco)}</td>
+                    <td style="text-align: right;">
+                        <button onclick="deletarPeca(${idxReal})" class="btn-delete"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                </tr>
+            `;
+        });
+        if(dbLive.pecas.length === 0) tbodyPecas.innerHTML = "<tr><td colspan='5' style='text-align:center;'>Nenhuma peça cadastrada.</td></tr>";
+
+        // 2. ABA DASHBOARD (RESUMO E ÚLTIMAS VENDAS)
+        let totalFaturado = 0;
+        const tbodyDashboard = document.getElementById('lista-ultimas-vendas');
+        tbodyDashboard.innerHTML = "";
+        
+        dbLive.vendas.slice().reverse().forEach(v => {
+            totalFaturado += v.precoFinal;
+            tbodyDashboard.innerHTML += `
+                <tr>
+                    <td style="font-weight: 700;"><i class="fa-solid fa-user-tag" style="color:#94a3b8; margin-right:5px;"></i> ${v.cliente}</td>
+                    <td>${v.codigoPeca} - ${v.nomePeca}</td>
+                    <td>${v.corPeca}</td>
+                    <td style="text-align: right; font-weight:bold; color:var(--success);">${formatarMoeda(v.precoFinal)}</td>
+                </tr>
+            `;
+        });
+        
+        document.getElementById('dash-total-vendas').innerText = formatarMoeda(totalFaturado);
+        document.getElementById('dash-qtd-pecas').innerText = dbLive.vendas.length;
+        if(dbLive.vendas.length === 0) tbodyDashboard.innerHTML = "<tr><td colspan='4' style='text-align:center;'>Nenhum arremate ainda.</td></tr>";
+
+        // 3. ABA SACOLAS (VENDAS POR PESSOA)
+        const containerSacolas = document.getElementById('container-sacolas');
+        containerSacolas.innerHTML = "";
+
+        // Agrupa as vendas pelo NOME do cliente (ignorando maiúsculas e minúsculas)
+        const sacolas = {};
+        dbLive.vendas.forEach(v => {
+            const chave = v.cliente.trim().toUpperCase();
+            if(!sacolas[chave]) sacolas[chave] = { nome: v.cliente, fone: v.fone, pecas: [], total: 0 };
+            sacolas[chave].pecas.push(v);
+            sacolas[chave].total += v.precoFinal;
+        });
+
+        const chaves = Object.keys(sacolas);
+        if(chaves.length === 0) {
+            containerSacolas.innerHTML = "<div class='card' style='text-align:center; color:#94a3b8;'>Nenhuma sacola aberta ainda.</div>";
+        } else {
+            chaves.forEach(chave => {
+                const sacola = sacolas[chave];
+                
+                // Monta o texto para enviar no WhatsApp
+                let textoZap = `Olá ${sacola.nome}! 💖\nAqui está o resumo do seu arremate na Live da Mania Forever:\n\n`;
+                sacola.pecas.forEach(p => {
+                    textoZap += `- ${p.codigoPeca} | ${p.nomePeca} (${p.corPeca}) -> *${formatarMoeda(p.precoFinal)}*\n`;
+                });
+                textoZap += `\n*TOTAL DA SACOLA: ${formatarMoeda(sacola.total)}*`;
+                
+                const linkZap = sacola.fone ? `https://wa.me/55${sacola.fone.replace(/\D/g,'')}?text=${encodeURIComponent(textoZap)}` : '#';
+                const styleBtnZap = sacola.fone ? '' : 'opacity: 0.5; pointer-events: none;';
+
+                let htmlPecas = '';
+                sacola.pecas.forEach(p => {
+                    htmlPecas += `
+                        <div style="display:flex; justify-content:space-between; padding: 10px 0; border-bottom: 1px solid #f1f5f9;">
+                            <div><span class="badge bg-pink" style="font-size:0.7rem; margin-right:5px;">${p.codigoPeca}</span> ${p.nomePeca} <span style="color:#94a3b8; font-size:0.85rem;">(${p.corPeca})</span></div>
+                            <div style="display:flex; align-items:center; gap: 15px;">
+                                <div style="font-weight:600;">${formatarMoeda(p.precoFinal)}</div>
+                                <button onclick="deletarVenda(${p.id})" style="background:none; border:none; color:var(--danger); cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                containerSacolas.innerHTML += `
+                    <div class="resumo-cliente">
+                        <div class="resumo-header">
+                            <div>
+                                <h4><i class="fa-solid fa-bag-shopping" style="color:var(--accent); margin-right:8px;"></i> Sacola: ${sacola.nome}</h4>
+                                <span style="font-size:0.85rem; color:#64748b;">${sacola.pecas.length} peça(s) arrematada(s)</span>
+                            </div>
+                            <h3 style="margin:0; color:var(--success);">${formatarMoeda(sacola.total)}</h3>
+                        </div>
+                        <div style="margin-bottom: 1rem;">
+                            ${htmlPecas}
+                        </div>
+                        <div style="text-align: right;">
+                            <a href="${linkZap}" target="_blank" class="btn-whatsapp" style="${styleBtnZap}">
+                                <i class="fa-brands fa-whatsapp" style="font-size: 1.2rem;"></i> Enviar Resumo
+                            </a>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+    }
+
+    function limparLive() {
+        if(confirm("CUIDADO: Isso vai apagar todas as vendas e o catálogo atual para iniciar uma Live nova. Tem certeza absoluta?")) {
+            dbLive = { pecas: [], vendas: [] };
+            salvarBanco();
+            atualizarTelas();
+            alert("Sistema limpo! Pronto para uma nova Live Shop.");
+        }
+    }
+
+    // INICIAR
+    window.onload = () => {
+        atualizarTelas();
+        showSection('dashboard');
+    };
+
+</script>
+</body>
+</html>
