@@ -208,7 +208,17 @@
                     <h2 id="dash-qtd-pecas" style="color: var(--success); margin:0; font-size: 2.5rem;">0</h2>
                 </div>
             </div>
-            
+
+            <div class="card">
+                <h3>Últimos Lançamentos</h3>
+                <div class="table-container">
+                    <table>
+                        <thead><tr><th>Cliente</th><th>Peça</th><th>Cor/Tamanho</th><th style="text-align: right;">Valor</th></tr></thead>
+                        <tbody id="lista-ultimas-vendas"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
 
         <!-- ABA PEÇAS -->
         <div id="pecas" class="section">
@@ -264,7 +274,6 @@
 
             <div class="card" style="border: 2px solid var(--accent-light);">
                 <form onsubmit="event.preventDefault(); registrarVenda();">
-                    
                     <div class="grid-2">
                         <div style="background: #f8fafc; padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--border);">
                             <h4 style="margin-bottom: 1rem; color: var(--primary);"><i class="fa-solid fa-user"></i> Dados da Cliente</h4>
@@ -293,7 +302,6 @@
                 </form>
             </div>
         </div>
-            
 
         <!-- ABA VENDA POR PESSOA -->
         <div id="por-pessoa" class="section">
