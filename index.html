@@ -9,21 +9,24 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
+    <!-- Biblioteca LZ-String para comprimir o código de sincronização -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.5.0/lz-string.min.js"></script>
+    
     <style>
         :root {
             --sidebar-bg: #000000; --sidebar-text: #ffffff;
             --main-bg: #f8fafc; --card-bg: #ffffff;
-            --primary: #000000; --accent: #ec4899; /* Rosa/Pink para o Live Shop */
+            --primary: #000000; --accent: #ec4899; 
             --accent-hover: #db2777; --accent-light: #fce7f3;
             --success: #10b981; --danger: #ef4444; --border: #e2e8f0;
             --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+            --shadow-float: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
             --radius-md: 10px; --radius-lg: 16px;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
         body { background: var(--main-bg); display: flex; flex-direction: column; min-height: 100vh; color: #0f172a; overflow-x: hidden; }
 
-        /* HEADER MOBILE */
         .mobile-header { display: none; padding: 1rem 1.5rem; background: var(--sidebar-bg); color: white; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 2000; width: 100%; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
         .mobile-header .logo { font-weight: 900; font-size: 1.5rem; margin: 0; }
         .mobile-header .logo span { color: var(--accent); }
@@ -31,7 +34,6 @@
         #mobile-overlay { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.6); z-index: 1400; opacity: 0; transition: opacity 0.3s; }
         #mobile-overlay.active { display: block; opacity: 1; }
 
-        /* MENU LATERAL */
         .sidebar { width: 260px; background: var(--sidebar-bg); color: var(--sidebar-text); display: flex; flex-direction: column; padding: 2.5rem 1.5rem; position: fixed; height: 100vh; z-index: 1500; transition: transform 0.3s ease; }
         .sidebar .logo { font-weight: 900; font-size: 1.4rem; margin-bottom: 3.5rem; letter-spacing: -1px; text-transform: uppercase; line-height: 1.1; }
         .sidebar .logo span { color: var(--accent); display: block; font-size: 1.8rem;}
@@ -60,13 +62,15 @@
         .input-group { margin-bottom: 1.25rem; display: flex; flex-direction: column; width: 100%; }
         label { font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: #475569; text-transform: uppercase; letter-spacing: 0.5px;}
         input, select, textarea { width: 100%; padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--radius-md); font-size: 0.95rem; outline: none; transition: 0.2s; background: #fff; color: #0f172a; }
-        input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.2); }
+        input:focus, select:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.2); }
         input[readonly] { background: #f1f5f9; cursor: not-allowed; font-weight: bold; color: var(--accent); }
 
         .btn-primary { background: var(--primary); color: #fff; padding: 14px 28px; border-radius: var(--radius-md); border: none; cursor: pointer; font-weight: 600; font-size: 0.95rem; transition: all 0.2s; width: 100%; text-align: center; }
         .btn-primary:hover { background: var(--accent); color: #fff; }
         .btn-success { background: var(--success); color: #fff; padding: 14px 28px; border-radius: var(--radius-md); border: none; cursor: pointer; font-weight: 800; font-size: 1rem; transition: all 0.2s; width: 100%; }
         .btn-success:hover { filter: brightness(1.1); }
+        .btn-outline { background: transparent; border: 2px solid var(--accent); color: var(--accent); padding: 10px 20px; border-radius: var(--radius-md); cursor: pointer; font-weight: 700; transition: 0.2s; }
+        .btn-outline:hover { background: var(--accent); color: #fff; }
 
         .table-container { width: 100%; max-width: 100vw; overflow-x: auto; display: block; -webkit-overflow-scrolling: touch; }
         table { width: 100%; border-collapse: collapse; min-width: 600px; }
@@ -79,6 +83,7 @@
         .bg-pink { background: #fce7f3; color: #be185d; }
         .bg-green { background: #dcfce7; color: #15803d; }
         .bg-gray { background: #f1f5f9; color: #475569; }
+        .bg-red { background: #fee2e2; color: #b91c1c; }
 
         .btn-delete { background: transparent; color: #94a3b8; border: none; cursor: pointer; font-size: 1.2rem; padding: 4px 8px; border-radius: 4px; transition: 0.2s; }
         .btn-delete:hover { color: var(--danger); background: #fee2e2; }
@@ -88,6 +93,12 @@
         .resumo-header h4 { font-size: 1.2rem; margin: 0; color: var(--primary); }
         .btn-whatsapp { background: #25D366; color: white; padding: 8px 16px; border-radius: 99px; font-weight: 700; font-size: 0.85rem; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; border: none; cursor: pointer;}
         .btn-whatsapp:hover { filter: brightness(1.1); }
+
+        /* MODAL DE LISTA DE PEÇAS */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(5px); display: flex; justify-content: center; align-items: center; z-index: 9999; opacity: 0; pointer-events: none; transition: all 0.3s ease; }
+        .modal-overlay.active { opacity: 1; pointer-events: all; }
+        .modal-card { background: #ffffff; padding: 2rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-float); border: 1px solid rgba(0,0,0,0.05); max-width: 500px; width: 90%; transform: translateY(30px) scale(0.95); transition: all 0.3s; display: flex; flex-direction: column; max-height: 90vh; }
+        .modal-overlay.active .modal-card { transform: translateY(0) scale(1); }
 
         @media (max-width: 900px) {
             body { flex-direction: column; }
@@ -104,6 +115,19 @@
 </head>
 <body>
 
+    <!-- MODAL LISTA DE PEÇAS -->
+    <div id="modal-lista" class="modal-overlay">
+        <div class="modal-card">
+            <h3 style="margin-top: 0; color: var(--accent);"><i class="fa-solid fa-list"></i> Lista de Peças</h3>
+            <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1rem;">Copie o texto abaixo para enviar ou guardar:</p>
+            <textarea id="texto-lista-pecas" style="flex-grow: 1; min-height: 250px; font-family: monospace; font-size: 0.85rem; resize: none; margin-bottom: 1rem; padding: 15px;" readonly></textarea>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn-primary" style="background: #f1f5f9; color: #475569;" onclick="fecharModalLista()">Fechar</button>
+                <button class="btn-primary" onclick="copiarListaPecas()"><i class="fa-regular fa-copy"></i> Copiar Texto</button>
+            </div>
+        </div>
+    </div>
+
     <div class="mobile-header">
         <div class="logo">MANIA FOREVER<span>LIVE SHOP</span></div>
         <button onclick="toggleMenu()" style="background:none; border:none; color:white; font-size:1.5rem; cursor:pointer; padding:5px;"><i class="fa-solid fa-bars"></i></button>
@@ -115,14 +139,16 @@
         
         <div class="nav-item active" onclick="showSection('dashboard')"><i class="fa-solid fa-chart-line"></i> Vendas no Total</div>
         <div class="nav-item" onclick="showSection('pecas')"><i class="fa-solid fa-shirt"></i> Peças da Live</div>
-        <div class="nav-item" onclick="showSection('lancamento')"><i class="fa-solid fa-cart-arrow-down"></i> Lançamento de Vendas</div>
+        <div class="nav-item" onclick="showSection('lancamento')"><i class="fa-solid fa-cart-arrow-down"></i> Lançamento Rápido</div>
         <div class="nav-item" onclick="showSection('por-pessoa')"><i class="fa-solid fa-users"></i> Venda por Pessoa</div>
+        <div class="nav-item" onclick="showSection('nuvem')" style="border-top: 1px solid #333; margin-top: 1rem; padding-top: 1rem;"><i class="fa-solid fa-cloud-arrow-up"></i> Nuvem / Sincronizar</div>
         
         <div class="nav-item" onclick="limparLive()" style="margin-top: auto; color: var(--danger);"><i class="fa-solid fa-trash-can"></i> Encerrar/Limpar Live</div>
     </div>
 
     <div class="main-content">
         
+        <!-- DASHBOARD -->
         <div id="dashboard" class="section active">
             <h2>Visão Geral da Live</h2>
             <div class="grid-2">
@@ -149,8 +175,12 @@
             </div>
         </div>
 
+        <!-- ABA PEÇAS -->
         <div id="pecas" class="section">
-            <h2>Estoque / Peças da Live</h2>
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 2.5rem; gap: 15px;">
+                <h2 style="margin: 0;">Estoque / Peças da Live</h2>
+                <button class="btn-outline" style="width: auto;" onclick="abrirModalLista()"><i class="fa-solid fa-file-lines"></i> Gerar Lista de Peças</button>
+            </div>
             
             <div class="card">
                 <h3>Cadastrar Nova Peça</h3>
@@ -178,7 +208,7 @@
             </div>
 
             <div class="card">
-                <h3>Catálogo de Peças Registradas</h3>
+                <h3>Catálogo (Organizado por Preço)</h3>
                 <div class="table-container">
                     <table>
                         <thead>
@@ -190,18 +220,19 @@
             </div>
         </div>
 
+        <!-- ABA LANÇAMENTO -->
         <div id="lancamento" class="section">
             <h2>Lançamento Rápido</h2>
-            <p style="color: #64748b; margin-bottom: 2rem;">Digite o código da peça arrematada na live para puxar os dados automaticamente e atribuir à cliente.</p>
+            <p style="color: #64748b; margin-bottom: 2rem;">Para agilizar, basta digitar <b>apenas o número</b> da peça (Ex: digite <strong style="color: var(--accent);">5</strong> para buscar a <strong>MF-005</strong>).</p>
 
             <div class="card" style="border: 2px solid var(--accent-light);">
                 <form onsubmit="event.preventDefault(); registrarVenda();">
                     
                     <div class="grid-2">
                         <div style="background: #f8fafc; padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--border);">
-                            <h4 style="margin-bottom: 1rem; color: var(--primary);"><i class="fa-solid fa-user"></i> Quem arrematou?</h4>
+                            <h4 style="margin-bottom: 1rem; color: var(--primary);"><i class="fa-solid fa-user"></i> Dados da Cliente</h4>
                             <div class="input-group">
-                                <label>Nome da Cliente / User</label>
+                                <label>Nome / @Instagram</label>
                                 <input type="text" id="venda-cliente-nome" required placeholder="Ex: @renata_silva">
                             </div>
                             <div class="input-group" style="margin-bottom: 0;">
@@ -211,17 +242,18 @@
                         </div>
 
                         <div style="background: #fff; padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--accent);">
-                            <h4 style="margin-bottom: 1rem; color: var(--accent);"><i class="fa-solid fa-tag"></i> Qual a peça?</h4>
+                            <h4 style="margin-bottom: 1rem; color: var(--accent);"><i class="fa-solid fa-tag"></i> Informações da Peça</h4>
                             
                             <div class="input-group">
-                                <label style="color: var(--accent);">Código da Peça</label>
-                                <input type="text" id="venda-codigo-busca" required placeholder="Digite o cód (Ex: MF-001)" oninput="buscarPecaPorCodigo()" autocomplete="off" style="border-color: var(--accent); font-weight: bold; text-transform: uppercase;">
+                                <label style="color: var(--accent);">Número ou Código</label>
+                                <input type="text" id="venda-codigo-busca" required placeholder="Ex: 12" oninput="buscarPecaPorCodigo()" autocomplete="off" style="border-color: var(--accent); font-weight: bold; text-transform: uppercase; font-size: 1.2rem;">
                             </div>
 
-                            <div id="preview-peca" style="display: none; padding: 10px; background: var(--accent-light); border-radius: 8px; margin-bottom: 1rem;">
+                            <div id="preview-peca" style="display: none; padding: 10px; background: var(--accent-light); border-radius: 8px; margin-bottom: 1rem; text-align: center;">
+                                <div style="font-weight: 900; color: var(--accent); font-size: 0.8rem; letter-spacing: 1px; margin-bottom: 5px;" id="preview-codigo-real">MF-000</div>
                                 <div style="font-weight: 800; font-size: 1.1rem;" id="preview-nome">NOME DA PEÇA</div>
                                 <div style="color: #be185d; font-size: 0.9rem;" id="preview-cor">Cor/Tamanho</div>
-                                <div style="font-weight: 800; font-size: 1.2rem; margin-top: 5px;" id="preview-preco">R$ 0,00</div>
+                                <div style="font-weight: 800; font-size: 1.4rem; margin-top: 5px;" id="preview-preco">R$ 0,00</div>
                             </div>
 
                             <button type="submit" class="btn-success" id="btn-confirmar-venda" disabled><i class="fa-solid fa-check-circle"></i> Confirmar Arremate</button>
@@ -232,12 +264,36 @@
             </div>
         </div>
 
+        <!-- ABA VENDA POR PESSOA -->
         <div id="por-pessoa" class="section">
             <h2>Fechamento de Sacolas</h2>
             <p style="color: #64748b; margin-bottom: 2rem;">Veja o resumo de cada cliente para enviar o total no WhatsApp após a Live.</p>
 
             <div id="container-sacolas">
+                <!-- AS SACOLAS APARECERÃO AQUI GERADAS PELO JS -->
+            </div>
+        </div>
+
+        <!-- ABA NUVEM (SINCRONIZAÇÃO COMPACTADA) -->
+        <div id="nuvem" class="section">
+            <h2>Nuvem MF - Sincronização Super Leve</h2>
+            <p style="color: #64748b; margin-bottom: 2rem;">O código gerado agora é <b>extremamente compactado</b>. Copie e envie no WhatsApp para sincronizar outro dispositivo instantaneamente.</p>
+
+            <div class="grid-2">
+                <div class="card" style="border-top: 4px solid var(--accent);">
+                    <h3>1. Exportar Dados (Gerar)</h3>
+                    <p class="small-txt" style="margin-bottom: 1rem;">Transforma suas peças e vendas num código super pequeno.</p>
+                    <button class="btn-primary" onclick="gerarCodigoSync()"><i class="fa-solid fa-file-zipper"></i> Gerar Código Compacto</button>
+                    <textarea id="sync-code-output" rows="3" readonly placeholder="O código aparecerá aqui..." style="font-family: monospace; font-size: 0.8rem; background: #f1f5f9; cursor: text; margin-top: 1rem; width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border);"></textarea>
                 </div>
+
+                <div class="card" style="border-top: 4px solid var(--success);">
+                    <h3>2. Importar Dados (Colar)</h3>
+                    <p class="small-txt" style="margin-bottom: 1rem;">Cole o código recebido do outro aparelho. <b>Isso substituirá seus dados!</b></p>
+                    <textarea id="sync-code-input" rows="3" placeholder="Cole o código aqui..." style="font-family: monospace; font-size: 0.8rem; margin-bottom: 1rem; width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border);"></textarea>
+                    <button class="btn-success" onclick="importarCodigoSync()"><i class="fa-solid fa-cloud-arrow-down"></i> Sincronizar Agora</button>
+                </div>
+            </div>
         </div>
 
     </div>
@@ -273,11 +329,10 @@
     }
 
     // ==========================================
-    // MÓDULO: PEÇAS (CADASTRO E LISTAGEM)
+    // MÓDULO: PEÇAS (CADASTRO, ORDENAÇÃO E LISTA)
     // ==========================================
     
     function atualizarCodigoGerado() {
-        // Gera o código ex: MF-001, MF-002 sequencialmente
         const proximoNumero = dbLive.pecas.length + 1;
         const cod = "MF-" + proximoNumero.toString().padStart(3, '0');
         document.getElementById('peca-codigo').value = cod;
@@ -297,32 +352,77 @@
         document.getElementById('peca-preco').value = '';
         
         atualizarTelas();
-        alert(`Peça ${codigo} cadastrada com sucesso!`);
     }
 
-    function deletarPeca(index) {
+    function deletarPeca(codigo) {
         if(confirm("Deseja realmente apagar esta peça do catálogo?")) {
-            dbLive.pecas.splice(index, 1);
+            dbLive.pecas = dbLive.pecas.filter(p => p.codigo !== codigo);
             salvarBanco();
             atualizarTelas();
         }
     }
 
+    function abrirModalLista() {
+        let texto = "✨ *CATÁLOGO DA LIVE - MANIA FOREVER* ✨\n\n";
+        
+        // Organiza as peças por preço crescente
+        const pecasOrdenadas = [...dbLive.pecas].sort((a,b) => a.preco - b.preco);
+        
+        if (pecasOrdenadas.length === 0) {
+            texto += "Nenhuma peça cadastrada ainda.";
+        } else {
+            pecasOrdenadas.forEach(p => {
+                let status = p.vendida ? "❌ VENDIDA" : "✅ DISPONÍVEL";
+                texto += `CÓDIGO: *${p.codigo}*\n👗 ${p.nome} - ${p.cor}\n💰 R$ ${p.preco.toFixed(2).replace('.', ',')}  ${status}\n\n`;
+            });
+        }
+        
+        document.getElementById('texto-lista-pecas').value = texto;
+        document.getElementById('modal-lista').classList.add('active');
+    }
+
+    function fecharModalLista() {
+        document.getElementById('modal-lista').classList.remove('active');
+    }
+
+    function copiarListaPecas() {
+        const textarea = document.getElementById('texto-lista-pecas');
+        textarea.select();
+        navigator.clipboard.writeText(textarea.value);
+        alert("Lista copiada com sucesso!");
+    }
+
     // ==========================================
-    // MÓDULO: LANÇAMENTO (SISTEMA DE BUSCA AUTOMÁTICA)
+    // MÓDULO: LANÇAMENTO (BUSCA INTELIGENTE)
     // ==========================================
 
     function buscarPecaPorCodigo() {
-        const inputBusca = document.getElementById('venda-codigo-busca').value.toUpperCase().trim();
+        let inputStr = document.getElementById('venda-codigo-busca').value.toUpperCase().trim();
         const previewDiv = document.getElementById('preview-peca');
         const btnConfirmar = document.getElementById('btn-confirmar-venda');
         
-        // Procura a peça no banco que tenha exatamente o código e que AINDA NÃO FOI VENDIDA
-        const pecaEncontrada = dbLive.pecas.find(p => p.codigo.toUpperCase() === inputBusca);
+        if(!inputStr) {
+            pecaSelecionadaParaVenda = null;
+            previewDiv.style.display = 'none';
+            btnConfirmar.disabled = true;
+            return;
+        }
+
+        let codigoPesquisa = inputStr;
+
+        // SE O USUÁRIO DIGITOU APENAS UM NÚMERO (Ex: 5, 05, 12) -> Transforma em MF-005
+        if (/^\d+$/.test(inputStr)) {
+            const numero = parseInt(inputStr, 10);
+            codigoPesquisa = "MF-" + String(numero).padStart(3, '0');
+        }
+
+        // Busca a peça pelo código (e garante que ela ainda NÃO foi vendida)
+        const pecaEncontrada = dbLive.pecas.find(p => p.codigo === codigoPesquisa && !p.vendida);
 
         if (pecaEncontrada) {
             pecaSelecionadaParaVenda = pecaEncontrada;
             
+            document.getElementById('preview-codigo-real').innerText = pecaEncontrada.codigo;
             document.getElementById('preview-nome').innerText = pecaEncontrada.nome;
             document.getElementById('preview-cor').innerText = pecaEncontrada.cor;
             document.getElementById('preview-preco').innerText = `R$ ${pecaEncontrada.preco.toFixed(2).replace('.', ',')}`;
@@ -342,7 +442,6 @@
         const clienteNome = document.getElementById('venda-cliente-nome').value.trim();
         const clienteFone = document.getElementById('venda-cliente-fone').value.trim();
 
-        // Registra a venda
         dbLive.vendas.push({
             id: Date.now(),
             cliente: clienteNome,
@@ -354,27 +453,30 @@
             dataHora: new Date().toLocaleString('pt-BR')
         });
 
-        // Opcional: Marcar a peça como "vendida" para não ser arrematada de novo por engano
-        // const idx = dbLive.pecas.findIndex(p => p.codigo === pecaSelecionadaParaVenda.codigo);
-        // if(idx > -1) dbLive.pecas[idx].vendida = true;
+        // Marca a peça como vendida para ela não aparecer mais na busca
+        const p = dbLive.pecas.find(x => x.codigo === pecaSelecionadaParaVenda.codigo);
+        if(p) p.vendida = true;
 
         salvarBanco();
         
-        // Limpa o campo da peça para o próximo arremate, mas MANTÉM o nome da cliente 
-        // caso ela pegue várias peças seguidas!
         document.getElementById('venda-codigo-busca').value = '';
-        buscarPecaPorCodigo(); // Esconde o preview
-        
+        buscarPecaPorCodigo(); 
         atualizarTelas();
         
-        // Efeito visual de sucesso
         const btn = document.getElementById('btn-confirmar-venda');
         btn.innerHTML = "<i class='fa-solid fa-check'></i> Arrematado!";
         setTimeout(() => { btn.innerHTML = "<i class='fa-solid fa-check-circle'></i> Confirmar Arremate"; }, 1500);
     }
 
     function deletarVenda(idVenda) {
-        if(confirm("Cancelar este arremate?")) {
+        if(confirm("Cancelar este arremate? A peça voltará para o estoque.")) {
+            // Volta a peça pro estoque antes de apagar a venda
+            const venda = dbLive.vendas.find(v => v.id === idVenda);
+            if(venda) {
+                const peca = dbLive.pecas.find(p => p.codigo === venda.codigoPeca);
+                if(peca) peca.vendida = false;
+            }
+
             dbLive.vendas = dbLive.vendas.filter(v => v.id !== idVenda);
             salvarBanco();
             atualizarTelas();
@@ -382,7 +484,74 @@
     }
 
     // ==========================================
-    // MÓDULO: RENDERIZAÇÕES (ATUALIZAR TELAS)
+    // MÓDULO: NUVEM (EMPACOTAMENTO EXTREMO)
+    // ==========================================
+    
+    // Função para transformar os objetos gigantescos em Arrays curtinhas
+    function compactarBanco(dbNormal) {
+        return {
+            p: dbNormal.pecas.map(p => [p.codigo, p.nome, p.cor, p.preco, p.vendida ? 1 : 0]),
+            v: dbNormal.vendas.map(v => [v.id, v.cliente, v.fone, v.codigoPeca, v.nomePeca, v.corPeca, v.precoFinal])
+        };
+    }
+
+    function descompactarBanco(dbPack) {
+        let novoDb = { pecas: [], vendas: [] };
+        if(dbPack.p) {
+            novoDb.pecas = dbPack.p.map(arr => ({codigo: arr[0], nome: arr[1], cor: arr[2], preco: arr[3], vendida: arr[4] === 1}));
+        }
+        if(dbPack.v) {
+            novoDb.vendas = dbPack.v.map(arr => ({id: arr[0], cliente: arr[1], fone: arr[2], codigoPeca: arr[3], nomePeca: arr[4], corPeca: arr[5], precoFinal: arr[6], dataHora: new Date().toLocaleString('pt-BR')}));
+        }
+        return novoDb;
+    }
+
+    function gerarCodigoSync() {
+        try {
+            // Empacota -> Transforma em Texto -> Comprime com LZString
+            const bancoEmpacotado = compactarBanco(dbLive);
+            const dadosStr = JSON.stringify(bancoEmpacotado);
+            const codigoComprimido = LZString.compressToBase64(dadosStr);
+            
+            const textarea = document.getElementById('sync-code-output');
+            textarea.value = codigoComprimido;
+            textarea.select();
+            navigator.clipboard.writeText(codigoComprimido);
+            alert("Código super reduzido copiado com sucesso!");
+        } catch(e) {
+            alert("Erro ao gerar código.");
+        }
+    }
+
+    function importarCodigoSync() {
+        const codigoB64 = document.getElementById('sync-code-input').value.trim();
+        if(!codigoB64) { alert("Cole o código primeiro!"); return; }
+        
+        if(confirm("Substituir todos os dados atuais pelo código colado?")) {
+            try {
+                const dadosStr = LZString.decompressFromBase64(codigoB64);
+                if (!dadosStr || dadosStr === "") throw new Error("Código vazio.");
+
+                const dadosEmpacotados = JSON.parse(dadosStr);
+                const novoDb = descompactarBanco(dadosEmpacotados);
+                
+                if(novoDb.pecas && novoDb.vendas) {
+                    dbLive = novoDb;
+                    salvarBanco();
+                    document.getElementById('sync-code-input').value = '';
+                    alert("Dados importados com sucesso!");
+                    showSection('dashboard');
+                } else {
+                    throw new Error("Formato inválido");
+                }
+            } catch(e) {
+                alert("Código inválido. Verifique se copiou tudo!");
+            }
+        }
+    }
+
+    // ==========================================
+    // MÓDULO: RENDERIZAÇÕES 
     // ==========================================
 
     function formatarMoeda(valor) {
@@ -392,26 +561,29 @@
     function atualizarTelas() {
         atualizarCodigoGerado();
 
-        // 1. ABA PEÇAS (CATÁLOGO)
+        // 1. ABA PEÇAS (Organizadas por Preço Crescente)
         const tbodyPecas = document.getElementById('lista-pecas');
         tbodyPecas.innerHTML = "";
-        dbLive.pecas.slice().reverse().forEach((p, index) => {
-            const idxReal = dbLive.pecas.length - 1 - index;
+        
+        const pecasOrdenadas = [...dbLive.pecas].sort((a,b) => a.preco - b.preco);
+        
+        pecasOrdenadas.forEach((p) => {
+            let statusBadge = p.vendida ? `<span class="badge bg-red" style="font-size:0.65rem;">Vendida</span>` : `<span class="badge bg-green" style="font-size:0.65rem;">Livre</span>`;
             tbodyPecas.innerHTML += `
                 <tr>
                     <td><span class="badge bg-pink" style="font-size:0.85rem;">${p.codigo}</span></td>
-                    <td style="font-weight:700;">${p.nome}</td>
+                    <td style="font-weight:700;">${p.nome} ${statusBadge}</td>
                     <td>${p.cor}</td>
                     <td style="color:var(--success); font-weight:bold;">${formatarMoeda(p.preco)}</td>
                     <td style="text-align: right;">
-                        <button onclick="deletarPeca(${idxReal})" class="btn-delete"><i class="fa-solid fa-trash"></i></button>
+                        <button onclick="deletarPeca('${p.codigo}')" class="btn-delete" title="Apagar Peça"><i class="fa-solid fa-trash"></i></button>
                     </td>
                 </tr>
             `;
         });
         if(dbLive.pecas.length === 0) tbodyPecas.innerHTML = "<tr><td colspan='5' style='text-align:center;'>Nenhuma peça cadastrada.</td></tr>";
 
-        // 2. ABA DASHBOARD (RESUMO E ÚLTIMAS VENDAS)
+        // 2. ABA DASHBOARD
         let totalFaturado = 0;
         const tbodyDashboard = document.getElementById('lista-ultimas-vendas');
         tbodyDashboard.innerHTML = "";
@@ -421,7 +593,7 @@
             tbodyDashboard.innerHTML += `
                 <tr>
                     <td style="font-weight: 700;"><i class="fa-solid fa-user-tag" style="color:#94a3b8; margin-right:5px;"></i> ${v.cliente}</td>
-                    <td>${v.codigoPeca} - ${v.nomePeca}</td>
+                    <td><span style="color:var(--accent); font-weight:800; font-size:0.8rem;">${v.codigoPeca}</span><br>${v.nomePeca}</td>
                     <td>${v.corPeca}</td>
                     <td style="text-align: right; font-weight:bold; color:var(--success);">${formatarMoeda(v.precoFinal)}</td>
                 </tr>
@@ -432,11 +604,10 @@
         document.getElementById('dash-qtd-pecas').innerText = dbLive.vendas.length;
         if(dbLive.vendas.length === 0) tbodyDashboard.innerHTML = "<tr><td colspan='4' style='text-align:center;'>Nenhum arremate ainda.</td></tr>";
 
-        // 3. ABA SACOLAS (VENDAS POR PESSOA)
+        // 3. ABA SACOLAS (VENDAS POR PESSOA E ZAP HUMANIZADO)
         const containerSacolas = document.getElementById('container-sacolas');
         containerSacolas.innerHTML = "";
 
-        // Agrupa as vendas pelo NOME do cliente (ignorando maiúsculas e minúsculas)
         const sacolas = {};
         dbLive.vendas.forEach(v => {
             const chave = v.cliente.trim().toUpperCase();
@@ -452,12 +623,14 @@
             chaves.forEach(chave => {
                 const sacola = sacolas[chave];
                 
-                // Monta o texto para enviar no WhatsApp
-                let textoZap = `Olá ${sacola.nome}! 💖\nAqui está o resumo do seu arremate na Live da Mania Forever:\n\n`;
+                // MENSAGEM DO WHATSAPP HUMANIZADA
+                let textoZap = `Oiii *${sacola.nome}*! Tudo bem? 💖✨\n\nPassando pra te mandar o resumo maravilhoso das peças que você garantiu na nossa Live! 🥰🛍️\n\n`;
                 sacola.pecas.forEach(p => {
-                    textoZap += `- ${p.codigoPeca} | ${p.nomePeca} (${p.corPeca}) -> *${formatarMoeda(p.precoFinal)}*\n`;
+                    textoZap += `👗 *${p.codigoPeca}* | ${p.nomePeca} (${p.corPeca})\n👉 *${formatarMoeda(p.precoFinal)}*\n\n`;
                 });
-                textoZap += `\n*TOTAL DA SACOLA: ${formatarMoeda(sacola.total)}*`;
+                textoZap += `💰 *TOTAL DA SUA SACOLA: ${formatarMoeda(sacola.total)}*\n\n`;
+                textoZap += `Me conta, amor: Qual vai ser a *forma de pagamento*? E como prefere fazer a *retirada/envio*? 📦🚗\n\n`;
+                textoZap += `⚠️ _Lembrando que pagamentos via link/maquininha possuem acréscimo das taxas, tá bom?_ 😉😘`;
                 
                 const linkZap = sacola.fone ? `https://wa.me/55${sacola.fone.replace(/\D/g,'')}?text=${encodeURIComponent(textoZap)}` : '#';
                 const styleBtnZap = sacola.fone ? '' : 'opacity: 0.5; pointer-events: none;';
@@ -469,7 +642,7 @@
                             <div><span class="badge bg-pink" style="font-size:0.7rem; margin-right:5px;">${p.codigoPeca}</span> ${p.nomePeca} <span style="color:#94a3b8; font-size:0.85rem;">(${p.corPeca})</span></div>
                             <div style="display:flex; align-items:center; gap: 15px;">
                                 <div style="font-weight:600;">${formatarMoeda(p.precoFinal)}</div>
-                                <button onclick="deletarVenda(${p.id})" style="background:none; border:none; color:var(--danger); cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+                                <button onclick="deletarVenda(${p.id})" style="background:none; border:none; color:var(--danger); cursor:pointer;" title="Cancelar Peça"><i class="fa-solid fa-xmark"></i></button>
                             </div>
                         </div>
                     `;
@@ -479,8 +652,8 @@
                     <div class="resumo-cliente">
                         <div class="resumo-header">
                             <div>
-                                <h4><i class="fa-solid fa-bag-shopping" style="color:var(--accent); margin-right:8px;"></i> Sacola: ${sacola.nome}</h4>
-                                <span style="font-size:0.85rem; color:#64748b;">${sacola.pecas.length} peça(s) arrematada(s)</span>
+                                <h4><i class="fa-solid fa-bag-shopping" style="color:var(--accent); margin-right:8px;"></i> ${sacola.nome}</h4>
+                                <span style="font-size:0.85rem; color:#64748b;">${sacola.pecas.length} peça(s) na sacola</span>
                             </div>
                             <h3 style="margin:0; color:var(--success);">${formatarMoeda(sacola.total)}</h3>
                         </div>
@@ -489,7 +662,7 @@
                         </div>
                         <div style="text-align: right;">
                             <a href="${linkZap}" target="_blank" class="btn-whatsapp" style="${styleBtnZap}">
-                                <i class="fa-brands fa-whatsapp" style="font-size: 1.2rem;"></i> Enviar Resumo
+                                <i class="fa-brands fa-whatsapp" style="font-size: 1.2rem;"></i> Enviar Resumo Fofo
                             </a>
                         </div>
                     </div>
@@ -499,15 +672,14 @@
     }
 
     function limparLive() {
-        if(confirm("CUIDADO: Isso vai apagar todas as vendas e o catálogo atual para iniciar uma Live nova. Tem certeza absoluta?")) {
+        if(confirm("CUIDADO: Isso vai apagar TODAS as vendas e TODAS as peças atuais para iniciar uma Live limpa. Tem certeza absoluta?")) {
             dbLive = { pecas: [], vendas: [] };
             salvarBanco();
             atualizarTelas();
-            alert("Sistema limpo! Pronto para uma nova Live Shop.");
+            alert("Sistema limpo! Tudo pronto para uma nova Live Shop.");
         }
     }
 
-    // INICIAR
     window.onload = () => {
         atualizarTelas();
         showSection('dashboard');
