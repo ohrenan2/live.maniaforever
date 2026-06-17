@@ -574,8 +574,8 @@
     }
 
     // --- NOVA NUVEM (JSONBIN FIXA E SEGURA) ---
-    const minhaChaveJsonBin = "COLE_AQUI_A_SUA_CHAVE_MASTER_KEY"; 
-    const meuBinFixo = "COLE_AQUI_O_NOVO_BIN_FIXO"; 
+    const minhaChaveJsonBin = "$2a$10$QfKPYkxFybMfZ65O9epthuCSIf2hCkpsM/4mhlSgwzXDv/EQf4JKe"; 
+    const meuBinFixo = "6a312431da38895dfec8dd74"; 
 
     // Compacta os dados para o envio ser muito mais leve
     function prepararPacote() {
@@ -595,7 +595,7 @@
     }
 
     async function salvarNaNuvem() {
-        if(!meuBinFixo || meuBinFixo === "COLE_AQUI_O_NOVO_BIN_FIXO") {
+        if(!meuBinFixo || meuBinFixo === "6a312431da38895dfec8dd74") {
             return alert("Por favor, crie um NOVO Bin no JSONBin para a Mania Forever e coloque o ID no código index.html!");
         }
 
@@ -624,7 +624,7 @@
     }
 
     async function baixarDaNuvem() {
-        if(!meuBinFixo || meuBinFixo === "COLE_AQUI_O_NOVO_BIN_FIXO") {
+        if(!meuBinFixo || meuBinFixo === "6a312431da38895dfec8dd74") {
             return alert("Por favor, crie um NOVO Bin no JSONBin para a Mania Forever e coloque o ID no código index.html!");
         }
 
